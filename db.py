@@ -38,7 +38,7 @@ class Database:
         database.increment_vote(<post_name>, <value form the corresponding radio button>)
         e.g. database.increment_vote("somepost","divij")
         """
-
+        if table_name=="NONE":return
         query = f"update {table_name} set votes = votes + 1 where name = '{candidate_name}' ;"
         self.cursor.execute(query)
         self.conn.commit()

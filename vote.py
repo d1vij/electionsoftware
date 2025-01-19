@@ -82,8 +82,10 @@ class Vote:
         for index,candidate in enumerate(self.choosen_candidates):
             candidate_name = candidate.get()
             post = list(posts.keys())[index] # this logic could be improved | gets the post name from the posts sequentially
-            print(f"{candidate_name} got voted for the post {post}")
-            self.database.increment_vote(post, candidate_name)
+            if post=="NONE":continue #ie no one was choosen
+            else:
+                print(f"{candidate_name} got voted for the post {post}")
+                self.database.increment_vote(post, candidate_name)
 
 
     def START(self):self.root.mainloop()

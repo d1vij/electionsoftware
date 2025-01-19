@@ -13,7 +13,7 @@ class Login:
         #widgets
         self.password_input = None
         self.login_window = None
-
+        self.exitbuttonframe = None
 
     def start_login(self):
         self.login_window = ctk.CTk() #root
@@ -27,9 +27,9 @@ class Login:
         login_window_frame = ctk.CTkFrame(master = self.login_window)
         login_window_frame.grid(row=0,column=0,columnspan=2)
 
-        exitbuttonframe = ctk.CTkFrame(master = self.login_window)
-        exitbuttonframe.grid(row=1,column=1)
-        exit_button = ctk.CTkButton(exitbuttonframe,text="Exit",fg_color = "red", command = lambda: self.EXIT())
+        self.exitbuttonframe = ctk.CTkFrame(master = self.login_window)
+        self.exitbuttonframe.grid(row=1,column=1)
+        exit_button = ctk.CTkButton(self.exitbuttonframe,text="Exit",fg_color = "red", command = lambda: self.EXIT())
         exit_button.grid(row=2,column=2,columnspan=2,sticky=ctk.E)
 
         self.password_input  = ctk.CTkEntry(master = login_window_frame,
@@ -56,6 +56,7 @@ class Login:
             self.password_input.delete(0,ctk.END)
             print("correct passs")
             # self.login_window.destroy()
+            self.exitbuttonframe.destroy()
             Vote(self.login_window, self.database).main()
 
 
