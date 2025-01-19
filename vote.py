@@ -1,124 +1,90 @@
-import tkinter as tk
-from PIL import Image, ImageTk
 import os
+import customtkinter as ctk
+from tkinter import messagebox
+from PIL import Image
 
+from electionsoftware.db import Database
+from electionsoftware.students import posts
 
-from dbconnection import Database
+class Vote:
+    defaultfont = ("Consolas",24)
+    def __init__(self, root : ctk.CTk, database : Database):
+        #variables
+        #root
+        self.root = root
+        self.root.title("Voting screen")
+        self.root.grid_rowconfigure(0,weight=1)
+        self.root.grid_columnconfigure(0,weight=1)  # self.root.attributes('-fullscreen',True) #start fullscreen
+        # self.root.geometry("1920x1080")
 
-"""
-main voting window
+        # widget initialization
+        self.masterframe  = ctk.CTkScrollableFrame(master = self.root) # main scrollable background  frame
+        # self.masterframe.grid_rowconfigure(0,weight=1)
+        # self.masterframe.grid_columnconfigure(0,weight=1)
 
-after clicking the submit button , a confirmation popup is provided
-if yes - votes are submitted and processed
-else - closes popup and retuns to the voting screen
+        self.submit_button = ctk.CTkButton(master = self.masterframe,
+                                           text="Submit",
+                                           font = self.defaultfont,
+                                           command=lambda : self._open_confirm_submit_window)
 
-"""
-
-
-
-
-class VoteScreen:
-    def __init__(self, post_ : str, candidates_ : list[str]):
-        #database
-        self.database = Database()
-
-        self.post = post_
-        self.candidates = candidates_
-
-        #root initialization
-        self.root = tk.Tk()
-        self.root.geometry("800x600")
-        self.root.title(self.post)
-
-        #variable defn
-        self.currvote = tk.StringVar()
-        self.currvote.set("NONE")
-        #functions
-        self.main()
+        self.choosen_candidates : list[ctk.StringVar] = [
+            ctk.StringVar(value="NONE") for _ in posts # each post is assigned a new string variable
+        ]
 
 
     def main(self):
-        #current post voting label
-        heading = tk.Label(self.root,text=f"Currently voting for the post {self.post}")
-        heading.config(anchor="center")
-        heading.grid()
+        self.masterframe.grid(row=0,
+                              column=0,
+                              sticky=ctk.NSEW)
+        currow = 0
+        for POSTROW,post in enumerate(posts):
+            self._set_row_of_candidates(currow,POSTROW,post, posts[post])
+            currow += 2
+
+        ctk.CTkButton(self.masterframe,text="submit",command=lambda:self._open_confirm_submit_window()).grid()
+        self.START()
+
+                                    #row to place in | name of the post | candidates in that post
+    def _set_row_of_candidates(self,row,POSTROW ,post, candidates_name : list[str] ):
+        ctk.CTkLabel(master = self.masterframe,
+                     text=post,
+                     font= ("Consolas",44),
+                     ).grid(row=row,column=0,sticky=ctk.N, pady=15)
+
+        for col,name in enumerate(candidates_name):
+            holding_frame = ctk.CTkFrame(master = self.masterframe) #new frame on top of scrollable master frame
+            name_label = ctk.CTkLabel(master = holding_frame,
+                                      text="",
+                                      image = ctk.CTkImage(dark_image = Image.open(os.path.join(os.getcwd(), f"images//{name}.png")),size = (100,100)),
+                                      compound = ctk.TOP)
+            curRadio = ctk.CTkRadioButton(master = holding_frame,
+                                          text=name,
+                                          variable = self.choosen_candidates[POSTROW] , #access the current name's corresponding post variable from the choosen_candidates list of strinvars
+                                          value = name)
+
+            holding_frame.grid(row=row+1,column=col,pady=25,padx=25, sticky=ctk.N)
+            name_label.grid(row=0, column = 0)
+            curRadio.grid(row=1,column=0)
 
 
-        for candidate in self.candidates:
-            candidate_radio = tk.Radiobutton(self.root,
-                                             variable = self.currvote,
-                                             value = candidate, # the variable value is the name of the candidate itself | no need to map to elif statements in db management
-                                             text = candidate,
-                                             image=self.instantiate_image(name = candidate),
-                                             compound="right")
-            candidate_radio.config(anchor=tk.W,
-                                   font=("Monospace",50))
-
-            candidate_radio.grid()
-
-
-        submit_button = tk.Button(self.root, text = "submit", command = self.confirm_window)
-        submit_button.grid()
-
-
-        self.start()
-
-    def confirm_window(self):
-        #TODO: make sure that the main vote screen closes onces after the vote is confirmed
-
-        cwindow = tk.Toplevel(self.root)
-        text= tk.Label(cwindow)
-
-        if self.currvote.get() != "NONE":
-            text.config(text="Do you want to submit the votes?")
-            text.grid()
-            yes_button = tk.Button(cwindow,text="yes",
-                                   command=self.submit_votes,
-                                   anchor="center",
-                                   font = ("arial",20))
-
-            no_button = tk.Button(cwindow,
-                                  text="no",
-                                  command=cwindow.destroy, #destroys confirm window
-                                  anchor = "center",
-                                  font = ("arial", 20))
-            yes_button.grid()
-            no_button.grid()
-
-        else:
-            cwindow.config(background="red")
-            text.config(text="You have to choose atleast one candidate")
-            text.grid()
-            ok_button = tk.Button(cwindow,
-                                  text = "OK!",
-                                  command=cwindow.destroy, #destroys confirm window
-                                  anchor = "center",
-                                  font = ("arial", 20))
-            ok_button.grid()
-        # cwindow.destroy()
-
-
-    def submit_votes(self):
-        name = self.currvote.get()
-        self.database.update_database(name)
-
-    def instantiate_image(self, name : str) -> ImageTk:
-        #TODO: work on images for the radio buttons
-        try:
-            # image_path = os.path.join(f"{name}.png")
-            image = Image.open(os.getcwd()+"snoop.png").resize((100,80))
-            return ImageTk.PhotoImage(image)
-        except FileNotFoundError:
-            print(f"No image exists with name {name} in directory ")
-
-    def start(self):self.root.mainloop()
+        # ctk.CTkLabel(master = self.masterframe,text='----------------------------------------------').grid(row=row+1,column=0,columnspan=2)
+        #TODO: figure this out  ^
 
 
 
-if __name__ == "__main__":
-    candidates = ["divij","shinchan","snoop"]
-    VoteScreen("Test",candidates)
 
-    
-    
+    def _open_confirm_submit_window(self):
+        if messagebox.askokcancel(message = "COnfirm to submit the votes ?"): self._submit_votes()
+    def _submit_votes(self):
+        for index,candidate in enumerate(self.choosen_candidates):
+            print(f"{candidate.get()} was voted for the post {list(posts.keys())[index]}")
 
+    def START(self):self.root.mainloop()
+
+if __name__ == '__main__':
+    Vote(ctk.CTk()).main()
+    # for post in posts:
+    #     print(post)
+    #     for student in posts[post]:
+    #         print(student)
+    #     print()
