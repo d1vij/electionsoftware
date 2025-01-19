@@ -27,10 +27,10 @@ class Login:
         login_window_frame = ctk.CTkFrame(master = self.login_window)
         login_window_frame.grid(row=0,column=0,columnspan=2)
 
-        # exitbuttonframe = ctk.CTkFrame(master = self.login_window)
-        # exitbuttonframe.grid(row=1,column=1)
-        # exit_button = ctk.CTkButton(exitbuttonframe,text="Exit",fg_color = "red", command = lambda: self.login_window.destroy())
-        # exit_button.grid(row=2,column=2,columnspan=2,sticky=ctk.E)
+        exitbuttonframe = ctk.CTkFrame(master = self.login_window)
+        exitbuttonframe.grid(row=1,column=1)
+        exit_button = ctk.CTkButton(exitbuttonframe,text="Exit",fg_color = "red", command = lambda: self.EXIT())
+        exit_button.grid(row=2,column=2,columnspan=2,sticky=ctk.E)
 
         self.password_input  = ctk.CTkEntry(master = login_window_frame,
                                        font=self.defaultfont,
@@ -62,6 +62,8 @@ class Login:
         else:print("Incorrect passowrd")
 
     def START(self):self.login_window.mainloop()
-
+    def EXIT(self):
+        self.CONTINUELOGIN = False
+        self.login_window.destroy()
 if __name__ == '__main__':
     Login().start_login()

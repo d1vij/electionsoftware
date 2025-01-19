@@ -14,8 +14,9 @@ def main() ->None:
         print("database connection successfull")
         while login.CONTINUELOGIN:
             login.start_login()
-    else:exit(1)
 
+    else:exit(1)
+    database.ENDCONNECTION()
 
 if __name__ == "__main__":
     main()
