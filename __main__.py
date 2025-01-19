@@ -1,4 +1,4 @@
-#main file
+# RUN THIS FILE ONLY
 
 from db import Database
 from login import Login
