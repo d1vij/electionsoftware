@@ -11,6 +11,7 @@ def main() ->None:
     database = Database()
     login = Login(database)
     if database.connect() == "CONNECTION_SUCCESS":
+        print("database connection successfull")
         while login.CONTINUELOGIN:
             login.start_login()
     else:exit(1)

@@ -10,6 +10,7 @@ class Vote:
     defaultfont = ("Consolas",24)
     def __init__(self, root : ctk.CTk, database : Database):
         #variables
+        self.database = database
         #root
         self.root = root
         self.root.title("Voting screen")
@@ -75,16 +76,17 @@ class Vote:
 
     def _open_confirm_submit_window(self):
         if messagebox.askokcancel(message = "COnfirm to submit the votes ?"): self._submit_votes()
+        self.root.destroy()
+
     def _submit_votes(self):
         for index,candidate in enumerate(self.choosen_candidates):
-            print(f"{candidate.get()} was voted for the post {list(posts.keys())[index]}")
+            candidate_name = candidate.get()
+            post = list(posts.keys())[index] # this logic could be improved | gets the post name from the posts sequentially
+            print(f"{candidate_name} got voted for the post {post}")
+            self.database.increment_vote(post, candidate_name)
+
 
     def START(self):self.root.mainloop()
 
 if __name__ == '__main__':
     Vote(ctk.CTk()).main()
-    # for post in posts:
-    #     print(post)
-    #     for student in posts[post]:
-    #         print(student)
-    #     print()

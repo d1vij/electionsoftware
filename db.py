@@ -42,7 +42,7 @@ class Database:
         query = f"update {table_name} set votes = votes + 1 where name = '{candidate_name}' ;"
         self.cursor.execute(query)
         self.conn.commit()
-        print(f"Incremented vote for candidate : {candidate_name} for the post {table_name}.")
+        print(f"Incremented vote for candidate : {candidate_name} for the post {table_name}.\n")
 
     def ENDCONNECTION(self):
         self.cursor.close()

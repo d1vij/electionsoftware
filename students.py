@@ -2,7 +2,7 @@
 
 posts : dict[str, list[str]] = {
     "post1":["divij","snoop","shinchan"],
-    "post2":["shinchan","peppa pig","gordon ramsey"],
-    "post3":["peppa pig","divij","gordon ramsey"],
-    "post4":["divij","gordon ramsey","peppa pig", "snoop","shinchan"]
+    "post2":["shinchan","peppa pig","gordon ramsey"]
 }
+    # "post3":["peppa pig","divij","gordon ramsey"],
+    # "post4":["divij","gordon ramsey","peppa pig", "snoop","shinchan"]
