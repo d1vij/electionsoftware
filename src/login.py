@@ -1,7 +1,7 @@
 import hashlib
 import customtkinter as ctk
 
-from electionsoftware.vote import Vote
+from vote import Vote
 
 def EOL():print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
 def NODELETE():

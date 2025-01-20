@@ -3,9 +3,9 @@ import customtkinter as ctk
 from tkinter import messagebox
 from PIL import Image
 
-from electionsoftware.db import Database
-from electionsoftware.students import posts
-from electionsoftware.log import log
+from db import Database
+from students import posts
+from log import log
 
 
 def EOL():print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
