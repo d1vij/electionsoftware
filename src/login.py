@@ -25,7 +25,9 @@ class Login:
 
         self.root : ctk.CTk = root
 
-    def start_login(self):
+    def start_login(self, SETDATABASETONONE : bool = False):
+        if SETDATABASETONONE: self.database = None
+
         self.root.title("Login window")
         # self.login_window.attributes("-fullscreen", True)
 

@@ -13,7 +13,7 @@ closing of the "root" window is not possible , instead the "exit" button of the 
 storing of votes occurs in both, a central database as well as a local csv file (which can be configured in log.py)
 
 """
-
+STARTOFFLINE : bool = False #allows offline
 
 def EOL():print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
 
@@ -28,7 +28,15 @@ def main() ->None:
         while login.CONTINUELOGIN:
             login.start_login()
 
-    else:exit(1)
+    elif database.connect() != "CONNECTION_SUCCESS" and STARTOFFLINE:
+
+        print("Starting in offline mode")
+        EOL()
+        while login.CONTINUELOGIN:
+            login.start_login(SETDATABASETONONE = True)
+
+    else:exit("ERROR CONNECTING TO DATABASE")
+    print("EXITING")
     database.ENDCONNECTION()
 
 if __name__ == "__main__":
