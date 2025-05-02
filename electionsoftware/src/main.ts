@@ -1,5 +1,14 @@
+/*
+* possibly getting a token while sending candidate data or just sending it via another endpoint
+* ensuring that even if repeated requests are sent to backend for updating votes, they are uploaded only once
+* Even IF multiple create requests are sent to db, its duplicates can be checked while parsing the db objects
+*
+*
+* using mongodb to store vote objects, instead of updating them to a sql table -> so that clashing while updating doesnt occur and
+* then parsing all of it using a script
+*/
 
-
+// TODO: make voting div loading when login is done and not when page loads -> essentially removing hiding it with css
 // TODO: add database functionality
 
 

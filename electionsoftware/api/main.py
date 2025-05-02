@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Request # main fastapi class
 from fastapi.responses import HTMLResponse # class to return html as response
 from fastapi.staticfiles import StaticFiles #serving static files along with html
-# from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.cors import  CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from utils import candidate_data
 
@@ -11,6 +10,8 @@ origins = [
     "http://127.0.0:8000"
 ]
 
+with open('../templates/main.html', mode = "r") as file :
+    MAIN_FILE =  HTMLResponse(content = file.read())
 
 app = FastAPI()
 app.add_middleware(
@@ -27,9 +28,8 @@ async def get_candidate_data() :
     return candidate_data
 
 @app.get('/voteapp')
-async def get_vote_html():
-    with open('../templates/main.html', mode= "r") as file:
-        return HTMLResponse(content=file.read())
+async def get_vote_html() -> HTMLResponse:
+    return MAIN_FILE
 
 @app.post("/submitvotes")
 async def post_votes(request : Request):

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/electionsoftware.iml" filepath="$PROJECT_DIR$/.idea/electionsoftware.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../python/mongodbtesting/.idea/mongodbtesting.iml" filepath="$PROJECT_DIR$/../../../python/mongodbtesting/.idea/mongodbtesting.iml" />
     </modules>
   </component>
 </project>
