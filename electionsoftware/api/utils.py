@@ -21,6 +21,7 @@ MAIN_HTML_PATH = os.path.join(SRC_PATH, "main.html")
 
 origins = ["*"]
 
+#totally not leaked database info here
 CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1"
 URL = ""
 PORT = None
