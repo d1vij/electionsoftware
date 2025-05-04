@@ -5,23 +5,25 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorCollection
 
-from utils import CONNECTIONSTRING
-from utils import DATABASE_NAME
-from utils import URL
-from utils import PORT
-from utils import STATIC_PATH
-from utils import SRC_PATH
-from utils import candidate_data
-from utils import Message
-from utils import generate_token
-from utils import origins
+from .utils import CONNECTIONSTRING
+from .utils import DATABASE_NAME
+from .utils import URL
+from .utils import PORT
+from .utils import SRC_PATH
+from .utils import MAIN_HTML_PATH
+from .utils import candidate_data
+from .utils import Message
+from .utils import generate_token
+from .utils import origins
+from .models import VoteResponse
 
-from models import VoteResponse
+import os
 
 # debug
 from pprint import pprint
 
-with open('../src/main.html', mode = "r") as file :
+file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), SRC_PATH, "main.html")
+with open(file_path, mode = "r") as file :
     MAIN_FILE =  HTMLResponse(content = file.read())
 
 
@@ -47,10 +49,12 @@ class Connection:
             print(e)
 
 class API:
-    def __init__(self,static_directory=STATIC_PATH):
+    def __init__(self):
         self.app = FastAPI()
-        self.app.mount("/static",StaticFiles(directory=static_directory))
-        self.app.mount("/src",StaticFiles(directory=SRC_PATH))
+        self.app.mount("/src",
+                       StaticFiles(directory = SRC_PATH),
+                       name = "src")
+
         self.app.add_middleware(
                 CORSMiddleware, #type: ignore
                 allow_origins = origins,

@@ -1,5 +1,6 @@
 import hashlib
 import time
+import os
 
 
 candidate_data = {
@@ -12,16 +13,20 @@ candidate_data = {
     "head_girl" : ['Liam Smith', 'Mason Thomas', 'Ava Jones', 'Evelyn Taylor']
 };
 
-STATIC_PATH="../static"
-SRC_PATH="../src"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_PATH = os.path.join(BASE_DIR, "..", "src")
+MAIN_HTML_PATH = os.path.join(SRC_PATH, "main.html")
+
+# print(SRC_PATH, MAIN_HTML_PATH)
+
 origins = ["*"]
 
-CONNECTIONSTRING = ""
+CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1"
 URL = ""
 PORT = None
 
-DATABASE_NAME = ""
-collection = ""
+DATABASE_NAME = "voting"
+collection = "voting"
 
 
 def generate_token() -> str:

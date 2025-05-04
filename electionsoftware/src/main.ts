@@ -28,7 +28,7 @@ interface Status {
 class Utils {
     static BASE_URL = "http://localhost:8000"
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db" //divij
-    static IMG_PATH = "static/img/"
+    static IMG_PATH = "src/img/"
     static EXT = '.jpg'
     static ENDPOINTS = {
         candidates : `${Utils.BASE_URL}/candidates`,
