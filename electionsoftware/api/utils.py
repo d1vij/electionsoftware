@@ -14,7 +14,14 @@ candidate_data = {
 
 STATIC_PATH="../static"
 SRC_PATH="../src"
+origins = ["*"]
 
+CONNECTIONSTRING = ""
+URL = ""
+PORT = None
+
+DATABASE_NAME = ""
+collection = ""
 
 
 def generate_token() -> str:

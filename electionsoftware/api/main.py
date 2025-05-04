@@ -5,12 +5,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorCollection
 
-from utils import candidate_data, STATIC_PATH,Message,SRC_PATH,generate_token
+from utils import CONNECTIONSTRING
+from utils import DATABASE_NAME
+from utils import URL
+from utils import PORT
+from utils import STATIC_PATH
+from utils import SRC_PATH
+from utils import candidate_data
+from utils import Message
+from utils import generate_token
+from utils import origins
+
 from models import VoteResponse
 
+# debug
 from pprint import pprint
 
-with open('../static/main.html', mode = "r") as file :
+with open('../src/main.html', mode = "r") as file :
     MAIN_FILE =  HTMLResponse(content = file.read())
 
 
@@ -41,22 +52,30 @@ class API:
         self.app.mount("/static",StaticFiles(directory=static_directory))
         self.app.mount("/src",StaticFiles(directory=SRC_PATH))
         self.app.add_middleware(
-                CORSMiddleware,
-                allow_origins = ["*"],
-                allow_credentials = False, ########
+                CORSMiddleware, #type: ignore
+                allow_origins = origins,
+                allow_credentials = False,
                 allow_methods = ["*"],
                 allow_headers = ["*"],
         )
 
-        self.connection = Connection(url = "127.0.0.1",port=27017,database = "votedb")
+        self.connection = Connection(
+                connection_string = CONNECTIONSTRING,
+                url=URL,
+                port=PORT,
+                database = DATABASE_NAME
+        )
 
+        # initializing routes
         self.get_routes()
         self.post_routes()
 
     def post_routes(self):
+
         @self.app.post("/submitvotes")
         async def post_votes(request :VoteResponse) :
             s = await self.connection.add_to_collection(collection="votes1",data=request.model_dump())
+            # TODO: add some better response
             if s:
                 return {"status":"success"}
             else: return {"status":"oogieboogie"}
@@ -64,9 +83,11 @@ class API:
 
 
     def get_routes(self):
+
         @self.app.get("/candidates")
         async def get_candidate_data() :
             return candidate_data
+
         @self.app.get("/gettoken")
         async def get_token():
             t =  generate_token()

@@ -15,15 +15,26 @@
 
 var token:string;
 
+interface VoteRequest {
+    token: string
+    vote_data: Object[]
+}
+
+interface Status {
+    status: string
+}
+
+
 class Utils {
+    static BASE_URL = "http://localhost:8000"
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db" //divij
     static IMG_PATH = "static/img/"
     static EXT = '.jpg'
     static ENDPOINTS = {
-        candidates : "http://localhost:8000/candidates",
-        token: "http://localhost:8000/gettoken",
-        voteapp : "http://localhost:8000/voteapp",
-        subtmitvotes: "http://localhost:8000/submitvotes"
+        candidates : `${Utils.BASE_URL}/candidates`,
+        token: `${Utils.BASE_URL}/gettoken`,
+        voteapp: `${Utils.BASE_URL}/voteapp`,
+        subtmitvotes: `${Utils.BASE_URL}/submitvotes`
     }
 
     static async sha256(message: string) {
@@ -38,19 +49,6 @@ class Utils {
     }
 }
 
-interface VoteRequest {
-    token : string
-    vote_data : Object[]
-}
-interface Status{
-    status:string
-}
-
-const loginDiv = document.getElementById("login_container")!;
-const votingDiv = document.getElementById("voting_container")!;
-const voteForm   = document.getElementById("vote_form")! as HTMLFormElement;
-
-
 function toggleVisibility (){
     loginDiv.classList.toggle("hidden");
     votingDiv.classList.toggle("hidden");
@@ -58,7 +56,7 @@ function toggleVisibility (){
 
 function getObjArrayFromFormData(e : FormData):Object[]   {
     /*
-    converts form data in array of objects
+    converts form data into array of objects
     [
         {
           "name": "divij",
@@ -175,10 +173,6 @@ async function submitVote(event : Event) {
     }
 }
 
-function reset(){
-
-}
-
 async function loadVoting(){
     const pe = document.getElementById("password") as HTMLInputElement
     const phash = await Utils.sha256(pe.value);
@@ -186,7 +180,7 @@ async function loadVoting(){
         const tResponse = await fetch(Utils.ENDPOINTS.token);
         token = (await tResponse.json()).token;
 
-        //REMOVE
+        //DEBUG
         console.log(token);
 
         pe.value = "";
@@ -196,7 +190,9 @@ async function loadVoting(){
     }
 }
 
-
+const loginDiv = document.getElementById("login_container")!;
+const votingDiv = document.getElementById("voting_container")!;
+const voteForm = document.getElementById("vote_form")! as HTMLFormElement;
 
 window.addEventListener("load", setupPage);
 voteForm.addEventListener("submit", submitVote);
