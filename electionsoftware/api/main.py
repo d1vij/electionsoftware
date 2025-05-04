@@ -51,9 +51,9 @@ class Connection:
 class API:
     def __init__(self):
         self.app = FastAPI()
-        self.app.mount("/src",
-                       StaticFiles(directory = SRC_PATH),
-                       name = "src")
+        self.app.mount("/public",
+                       StaticFiles(directory = SRC_PATH), #js html css in src_path
+                       name = "public")
 
         self.app.add_middleware(
                 CORSMiddleware, #type: ignore
