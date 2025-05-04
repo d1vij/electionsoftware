@@ -9,8 +9,11 @@
 */
 
 // TODO: make voting div loading when login is done and not when page loads -> essentially removing hiding it with css
+//^ idt students will go to console and change classes of divs during voting : on hold then
+
 // TODO: add database functionality
 
+var token:string;
 
 class Utils {
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db" //divij
@@ -18,11 +21,13 @@ class Utils {
     static EXT = '.jpg'
     static ENDPOINTS = {
         candidates : "http://localhost:8000/candidates",
+        token: "http://localhost:8000/gettoken",
         voteapp : "http://localhost:8000/voteapp",
         subtmitvotes: "http://localhost:8000/submitvotes"
     }
 
     static async sha256(message: string) {
+        //bad of js to not have a default hashing library or function
         const msgBuffer = new TextEncoder().encode(message);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -33,36 +38,68 @@ class Utils {
     }
 }
 
-// @ts-ignore
+interface VoteRequest {
+    token : string
+    vote_data : Object[]
+}
+interface Status{
+    status:string
+}
 
 const loginDiv = document.getElementById("login_container")!;
 const votingDiv = document.getElementById("voting_container")!;
 const voteForm   = document.getElementById("vote_form")! as HTMLFormElement;
 
 
-interface VoteResponse  {
-    status : string,
-    votes : Record<string, string>
+function toggleVisibility (){
+    loginDiv.classList.toggle("hidden");
+    votingDiv.classList.toggle("hidden");
+}
+
+function getObjArrayFromFormData(e : FormData):Object[]   {
+    /*
+    converts form data in array of objects
+    [
+        {
+          "name": "divij",
+          "post": "head_boy"
+        },
+        {
+          "name": "abc",
+          "post": "head_girl"
+        }
+      ]
+     */
+
+    let arr: Object[] =[]
+    e.forEach((post, name)=>{
+        // @ts-ignore
+        arr.push({
+            "name":name,
+            "post":post
+        })
+    })
+    return arr
 }
 
 async function setupPage(){
 	console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")),"Incorrect initial class to login and or voting container");
 
     const res = await fetch(Utils.ENDPOINTS.candidates);
-    const candidate_data = await res.json();
+    const candidateData = await res.json();
 
-    // setting up vote form
-    for(const post in candidate_data){
-        const candidates = candidate_data[post];
+    // setting up content inside vote form
+    for(const post in candidateData){
+        const candidates = candidateData[post];
 
-        const candidates_row = document.createElement("div");
-        const title = document.createElement("h1");
+        const candidatesRow = document.createElement("div"); // all candidates for same post in a common row div
+        const postTitle = document.createElement("h1");
 
-        title.classList.add("post-title");
-        title.textContent = Utils.normalize(post);
+        postTitle.classList.add("post-title");
+        postTitle.textContent = Utils.normalize(post); // TODO: Work on normalize function
 
-        candidates_row.classList.add("candidates-row")
-        candidates_row.append(title);
+        candidatesRow.classList.add("candidates-row")
+        candidatesRow.append(postTitle);
 
         for(const name of candidates){
             const id = post+name;
@@ -91,11 +128,12 @@ async function setupPage(){
 
             currCandidateDiv.append(currCandidateRadio);
             currCandidateDiv.append(l);
-            candidates_row.append(currCandidateDiv);
+            candidatesRow.append(currCandidateDiv);
         }
 
-        voteForm.append(candidates_row);
+        voteForm.append(candidatesRow);
     }
+
     const sb = document.createElement("button");
     sb.setAttribute("type", "submit");
     sb.textContent = "Submit Vote";
@@ -109,19 +147,27 @@ async function submitVote(event : Event) {
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
 
+        let data : VoteRequest = {
+            token:token,
+            vote_data: getObjArrayFromFormData(formData)
+
+        }
+        console.log(data)
         const response = await fetch(Utils.ENDPOINTS.subtmitvotes, {
             method: "POST",
-            body: formData
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(data)
         });
 
-        const result : VoteResponse = await response.json();
-        if(result.status=="success"){
-            console.log(result.votes);
+        const result:Status = await response.json();
+        if(result.status==="success"){
             toggleVisibility();
             voteForm.reset();
         }
         else{
-            throw new Error("Vote processing failed"+result.status);
+            throw new Error("Vote processing failed");
         }
 
     } catch (err) {
@@ -129,15 +175,20 @@ async function submitVote(event : Event) {
     }
 }
 
-function toggleVisibility (){
-    loginDiv.classList.toggle("hidden");
-    votingDiv.classList.toggle("hidden");
+function reset(){
+
 }
 
 async function loadVoting(){
     const pe = document.getElementById("password") as HTMLInputElement
-    const ph = await Utils.sha256(pe.value);
-    if(ph === Utils.PASSWORD_HASH){
+    const phash = await Utils.sha256(pe.value);
+    if(phash === Utils.PASSWORD_HASH){
+        const tResponse = await fetch(Utils.ENDPOINTS.token);
+        token = (await tResponse.json()).token;
+
+        //REMOVE
+        console.log(token);
+
         pe.value = "";
         toggleVisibility();
     } else {
@@ -148,7 +199,6 @@ async function loadVoting(){
 
 
 window.addEventListener("load", setupPage);
-
 voteForm.addEventListener("submit", submitVote);
 document.getElementById("submit_password")?.addEventListener("click", loadVoting);
 

@@ -12,7 +12,14 @@ candidate_data = {
     "head_girl" : ['Liam Smith', 'Mason Thomas', 'Ava Jones', 'Evelyn Taylor']
 };
 
+STATIC_PATH="../static"
+SRC_PATH="../src"
+
+
 
 def generate_token() -> str:
     """retuns a token / sha256 hashed string based on time of call"""
     return hashlib.sha256(str(time.time()).encode('utf-8')).hexdigest()
+
+def Message(t: str) -> dict :
+    return {"message" : t}
