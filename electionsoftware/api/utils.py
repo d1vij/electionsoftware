@@ -11,7 +11,7 @@ candidate_data = {
     "head_boy" : ['Charlotte Jackson', 'Emma Johnson', 'Harper Anderson', 'Mason Thomas', 'Mia Hernandez', 'Ethan Moore',
                 'Isabella Rodriguez', 'Liam Smith'],
     "head_girl" : ['Liam Smith', 'Mason Thomas', 'Ava Jones', 'Evelyn Taylor']
-};
+}   
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_PATH = os.path.join(BASE_DIR, "..", "public")
@@ -26,7 +26,7 @@ URL = ""
 PORT = None
 
 DATABASE_NAME = "voting"
-collection = "voting"
+collection = "votes1"
 
 
 def generate_token() -> str:
