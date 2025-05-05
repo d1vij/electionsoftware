@@ -16,7 +16,7 @@ class Utils {
     static BASE_URL = ""
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db" //divij
     static IMG_PATH = "public/img/"
-    static EXT = '.jpg'
+    static EXT = '.png'
     static ENDPOINTS = {
         candidates : `${Utils.BASE_URL}/candidates`,
         token: `${Utils.BASE_URL}/gettoken`,
@@ -151,7 +151,6 @@ async function submitVote(event : Event) {
 
         const result:Status = await response.json();
         if(result.status=="success"){
-            
             voteResolution("Vote successfull")
             toggleVisibility();
             voteForm.reset();

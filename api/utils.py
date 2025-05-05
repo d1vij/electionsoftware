@@ -4,13 +4,14 @@ import os
 
 
 candidate_data = {
-    "sports_captain_boy" : ['Liam Smith', 'Ava Jones', 'Mason Thomas', 'Harper Anderson', 'Noah Williams',
-                          'Evelyn Taylor', 'William Garcia', 'James Davis'],
-    "sports_captain_girl" : ['Isabella Rodriguez', 'Ethan Moore', 'Amelia Gonzalez', 'Harper Anderson', 'Sophia Miller',
-                           'Elijah Lopez'],
-    "head_boy" : ['Charlotte Jackson', 'Emma Johnson', 'Harper Anderson', 'Mason Thomas', 'Mia Hernandez', 'Ethan Moore',
-                'Isabella Rodriguez', 'Liam Smith'],
-    "head_girl" : ['Liam Smith', 'Mason Thomas', 'Ava Jones', 'Evelyn Taylor']
+    "head_boy" : ["Divij", "Rohan", "Aditya", "Karan", "Nishant"],
+    "head_girl" : ["Aisha", "Shruti", "Meera", "Anita", "Priya"],
+    "sports_captain" : ["Rahul", "Arjun", "Vivek", "Kavya", "Tarun"],
+    "cultural_secretary" : ["Neha", "Tanya", "Tina", "Mira", "Rhea"],
+    "discipline_incharge" : ["Naman", "Simran", "Raj", "Rehan", "Bhavya"],
+    "tech_leader" : ["Zoya", "Sid", "Manav", "Kabir", "Hardik"],
+    "eco_head" : ["Isha", "Dev", "Parth", "Veer", "Lavanya"],
+    "media_incharge" : ["Mehul", "Anaya", "Krishna", "Sarthak", "Niharika"]
 }   
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
