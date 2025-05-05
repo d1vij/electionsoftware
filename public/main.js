@@ -1,16 +1,5 @@
 "use strict";
-/*
-* possibly getting a token while sending candidate data or just sending it via another endpoint
-* ensuring that even if repeated requests are sent to backend for updating votes, they are uploaded only once
-* Even IF multiple create requests are sent to db, its duplicates can be checked while parsing the db objects
-*
-*
-* using mongodb to store vote objects, instead of updating them to a sql table -> so that clashing while updating doesnt occur and
-* then parsing all of it using a script
-*/
-// TODO: make voting div loading when login is done and not when page loads -> essentially removing hiding it with css
-//^ idt students will go to console and change classes of divs during voting : on hold then
-// TODO: add database functionality
+// TODO: Refactor everything 
 var token;
 class Utils {
     static BASE_URL = "";
@@ -101,6 +90,7 @@ async function setupPage() {
     }
     const sb = document.createElement("button");
     sb.setAttribute("type", "submit");
+    sb.setAttribute("id", "submit_button");
     sb.textContent = "Submit Vote";
     voteForm.append(sb);
     console.log("Setup done");
@@ -108,6 +98,8 @@ async function setupPage() {
 async function submitVote(event) {
     try {
         event.preventDefault();
+        //disabling the submit button once pressed
+        document.getElementById("submit_button").disabled = true;
         const form = event.target;
         const formData = new FormData(form);
         let data = {
@@ -123,17 +115,23 @@ async function submitVote(event) {
             body: JSON.stringify(data)
         });
         const result = await response.json();
-        if (result.status === "success") {
+        if (result.status == "success") {
+            voteResolution("Vote successfull");
             toggleVisibility();
             voteForm.reset();
         }
         else {
+            voteResolution(`Vote Failed : ${result.status} `, true);
             throw new Error("Vote processing failed");
         }
     }
     catch (err) {
         console.log("Error : ", err);
     }
+}
+function voteResolution(message, e = false) {
+    resolutionHeader.textContent = message;
+    e ? resolutionHeader.classList.add("error") : resolutionHeader.classList.remove("error");
 }
 async function loadVoting() {
     const pe = document.getElementById("password");
@@ -143,7 +141,9 @@ async function loadVoting() {
         token = (await tResponse.json()).token;
         //DEBUG
         console.log(token);
+        document.getElementById("submit_button").disabled = false;
         pe.value = "";
+        voteResolution("");
         toggleVisibility();
     }
     else {
@@ -153,6 +153,7 @@ async function loadVoting() {
 const loginDiv = document.getElementById("login_container");
 const votingDiv = document.getElementById("voting_container");
 const voteForm = document.getElementById("vote_form");
+const resolutionHeader = document.getElementById("resolution");
 window.addEventListener("load", setupPage);
 voteForm.addEventListener("submit", submitVote);
 document.getElementById("submit_password")?.addEventListener("click", loadVoting);

@@ -121,6 +121,7 @@ async function setupPage(){
 
     const sb = document.createElement("button");
     sb.setAttribute("type", "submit");
+    sb.setAttribute("id", "submit_button");
     sb.textContent = "Submit Vote";
     voteForm.append(sb)
     console.log("Setup done");
@@ -129,6 +130,8 @@ async function setupPage(){
 async function submitVote(event : Event) {
     try{
         event.preventDefault();
+        //disabling the submit button once pressed
+        (document.getElementById("submit_button") as HTMLButtonElement)!.disabled = true 
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
 
@@ -147,11 +150,14 @@ async function submitVote(event : Event) {
         });
 
         const result:Status = await response.json();
-        if(result.status==="success"){
+        if(result.status=="success"){
+            
+            voteResolution("Vote successfull")
             toggleVisibility();
             voteForm.reset();
         }
         else{
+            voteResolution(`Vote Failed : ${result.status} `,true)
             throw new Error("Vote processing failed");
         }
 
@@ -160,17 +166,24 @@ async function submitVote(event : Event) {
     }
 }
 
+function voteResolution(message : string,e=false){
+    resolutionHeader.textContent = message
+    e ? resolutionHeader.classList.add("error")  : resolutionHeader.classList.remove("error");
+}
+
+
 async function loadVoting(){
     const pe = document.getElementById("password") as HTMLInputElement
     const phash = await Utils.sha256(pe.value);
     if(phash === Utils.PASSWORD_HASH){
         const tResponse = await fetch(Utils.ENDPOINTS.token);
         token = (await tResponse.json()).token;
-
+        
         //DEBUG
         console.log(token);
-
+        (document.getElementById("submit_button") as HTMLButtonElement).disabled = false
         pe.value = "";
+        voteResolution("");
         toggleVisibility();
     } else {
         console.log("Incorrect passwrod", pe.value)
@@ -180,6 +193,9 @@ async function loadVoting(){
 const loginDiv = document.getElementById("login_container")!;
 const votingDiv = document.getElementById("voting_container")!;
 const voteForm = document.getElementById("vote_form")! as HTMLFormElement;
+const resolutionHeader = document.getElementById("resolution") as HTMLHeadingElement
+
+
 
 window.addEventListener("load", setupPage);
 voteForm.addEventListener("submit", submitVote);
