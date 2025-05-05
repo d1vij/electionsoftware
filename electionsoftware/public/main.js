@@ -13,7 +13,7 @@
 // TODO: add database functionality
 var token;
 class Utils {
-    static BASE_URL = "http://localhost:8000";
+    static BASE_URL = "";
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db"; //divij
     static IMG_PATH = "public/img/";
     static EXT = '.jpg';
