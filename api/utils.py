@@ -17,10 +17,10 @@ candidate_data = {
 }   
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_PATH = os.path.join(BASE_DIR, "..", "public/html")
+SRC_PATH = os.path.join(BASE_DIR, "..", "public/")
 MAIN_HTML_PATH = os.path.join(SRC_PATH, "main.html")
 
-# print(SRC_PATH, MAIN_HTML_PATH)
+print(SRC_PATH, MAIN_HTML_PATH)
 
 origins = ["*"]
 
@@ -66,5 +66,5 @@ class Connection:
     async def fetchResults(self,*,collection:str) -> list[VoteResponse]:
         collection :AsyncIOMotorCollection= self.database[collection]
 
-        cursor =  collection.find()
+        cursor =  collection.find({})
         return await cursor.to_list()

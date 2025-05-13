@@ -11,14 +11,17 @@
     
     <script>
         async function f () {
+            console.log("result query sent")
             const plots = document.getElementById('plots')
             const res = await fetch('/result-images')
+            console.log("results fetched")
             const data = await res.json()
-            for(let image of data.imagedata){
+            for(let i=0 ;i<data.imagedata.length;i++){
                 let e = document.createElement('img');
                 e.setAttribute('draggable','false');
-                e.src = image;
+                e.src = data.imagedata[i];
                 plots.append(e);
+                console.log(`Plotted plot ${i+1}`);
             }
         }
         f()
