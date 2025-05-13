@@ -29,7 +29,7 @@ import os
 from pprint import pprint
 import matplotlib.pyplot as plt
 
-file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), SRC_PATH, "main.html")
+file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), SRC_PATH, "html/main.html")
 with open(file_path, mode = "r") as file :
     MAIN_FILE =  HTMLResponse(content = file.read())
 
@@ -80,32 +80,30 @@ async def getResultGraphs() -> list[str]:
     results:list[VoteResponse] = await connObj.fetchResults(collection="votes1")
     posts = {p : dict.fromkeys(candidate_data[p], 0) for p in candidate_data.keys()}
 
-    # print(results[0])
+    print(len(results))
     # print(posts)
 
     seen_tokens =[]
     #updating votes from results
     for i,document in enumerate(results):
-        print(i)
+        # print(i)
         if not (document["token"] in seen_tokens):
             seen_tokens.append(document['token'])
             for vote in document['vote_data']:
-                try :
                     post_name = vote["post"]
                     voted_candidate = vote['name']
-                    
+                    print(f"{voted_candidate=}")
                     curPostCandidates = posts[post_name]
-                    # print(curPostCandidates)
-    
                     curPostCandidates[voted_candidate] += 1
-                except Exception as e:
-                    # temporatry 
-                    pass            
+                # except Exception as e:
+                # try :
+                #     raise(Exception(e))
 
                 
     #making graphs
     img_data = await asyncio.gather(*[makeGraph(post, vote_dict) for post,vote_dict in posts.items()])
 
+    pprint(posts) # posts implies results
     return img_data
     
 
@@ -137,6 +135,7 @@ class API:
         @self.app.post("/submitvotes")
         async def post_votes(request :VoteResponse) :
             s = await self.connection.add_to_collection(collection="votes1",data=request.model_dump()) #model_dump method converts the incoming form data to VoteResponse formatted dict
+            print(request.model_dump())
             # TODO: add some better response
             if s:
                 return {"status":"success"}

@@ -57,7 +57,9 @@ function getObjArrayFromFormData(e : FormData):Object[]   {
      */
 
     let arr: Object[] =[]
-    e.forEach((post, name)=>{
+    e.forEach((name, post)=>{
+        // value, key isntead of key, value
+        
         // @ts-ignore
         arr.push({
             "name":name,
