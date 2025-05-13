@@ -1,7 +1,9 @@
 import hashlib
 import time
 import os
-
+from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorCollection
+from .models import VoteResponse
 
 candidate_data = {
     "head_boy" : ["Divij", "Rohan", "Aditya", "Karan", "Nishant"],
@@ -15,7 +17,7 @@ candidate_data = {
 }   
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_PATH = os.path.join(BASE_DIR, "..", "public")
+SRC_PATH = os.path.join(BASE_DIR, "..", "public/html")
 MAIN_HTML_PATH = os.path.join(SRC_PATH, "main.html")
 
 # print(SRC_PATH, MAIN_HTML_PATH)
@@ -37,3 +39,32 @@ def generate_token() -> str:
 
 def Message(t: str) -> dict :
     return {"message" : t}
+
+
+
+class Connection:
+    def __init__(self,*,connection_string=None,url=None,port=None,database:str):
+        if connection_string:
+            self.client = AsyncIOMotorClient(connection_string)
+        elif url and port :
+            self.client = AsyncIOMotorClient(url, port)
+
+        self.database = self.client.get_database(database)
+
+    async def add_to_collection(self,*,collection:str,data:dict):
+        try:
+            collection : AsyncIOMotorCollection = self.database.get_collection(collection)
+            res = await collection.insert_one(data)
+            if res.acknowledged:
+                #insertion success
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+    
+    async def fetchResults(self,*,collection:str) -> list[VoteResponse]:
+        collection :AsyncIOMotorCollection= self.database[collection]
+
+        cursor =  collection.find()
+        return await cursor.to_list()
