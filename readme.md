@@ -88,7 +88,7 @@ $ uvicorn api.main:app --port 9000
 ```
 
 > [!IMPORTANT]
-> Currently how the vote app is rendered is that when client recieves the static html file, all form buttons are generated dynamically and are hidden with a css class (name  _hidden_). When successful login is done, hidden class is toggled between login div and vote-form div. This implies that user voting could simple go and edit the html classes and make the vote form visible. Although the submit button is disabled, this should be kept in mind how easily exploitable is current system :).
+> Currently how the vote app is rendered is that when client recieves the static html file, all form buttons are generated dynamically and are hidden with a css class (name  _hidden_). When successful login is done, hidden class is toggled between login div and vote-form div. This means that user could simple go and edit the respective classes in html and make the vote form visible. Although the submit button is disabled, this should be kept in mind how easily exploitable is current system :).
 
 
 <hr>
