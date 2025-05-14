@@ -130,7 +130,7 @@ async def getResultGraphs() -> list[str]:
     print("Empty results dict")
     pprint(compiled_results)
 
-    Log.info("Total documents found ", len(all_documents))
+    Log.info("Total documents found "+ len(all_documents))
 
     seen_tokens = []
     # updating votes from results
