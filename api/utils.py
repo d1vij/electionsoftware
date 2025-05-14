@@ -2,7 +2,8 @@ import hashlib
 import time
 import os
 import chalk
-from .models import VoteResponse
+import random
+import pymongo
 
 
 """Change candidate data here
@@ -20,7 +21,8 @@ candidate_data = {
 }
 
 
-CONNECTIONSTRING = "" # ADD CONNNECTION STRING HERE
+
+CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1" # ADD CONNNECTION STRING HERE
 URL = ""
 PORT = None
 
@@ -29,7 +31,7 @@ PORT = None
 DATABASE_NAME = "voting"
 
 # Name of collection used to store all the votes
-ACTIVE_COLLECTION = "votes1"
+ACTIVE_COLLECTION = "votes"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -65,3 +67,46 @@ class Log:
         print(chalk.blue(f"[*] {message}"))
 
 
+
+
+
+if __name__ == "__main__":
+    client = pymongo.MongoClient(CONNECTIONSTRING)
+
+    working_database = client[DATABASE_NAME]
+    working_collection = working_database[ACTIVE_COLLECTION]
+
+    def generate_data(data_count):
+        l = []
+        for _ in range(data_count):
+            t = generate_token()
+            vd = []
+            posts = list(candidate_data.keys())
+            for p in posts:
+                c = random.choice(candidate_data.get(p))
+                vd.append({"name": c, "post": p})
+            e = {"token": t, "vote_data": vd}
+            l.append(e)
+        print("generated data")
+        return l
+
+
+    def post_data(data):
+        """posts dummy vote data"""
+        working_collection.insert_many(data)
+        print("uploaded data")
+
+
+    def DELETE_ALL():
+        working_collection.delete_many({})
+
+
+    o = input("what 1.fakevotes 2.delete all votes- PLEASEDELETEVOTES :>")
+    match o:
+        case "fakevotes":
+            post_data(generate_data(
+                int(input("Count of fake vote sessions : "))))
+        case "PLEASEDELETEVOTES":
+            DELETE_ALL()
+            print("Deleted votes")
+        case _: print("invalid ", o)

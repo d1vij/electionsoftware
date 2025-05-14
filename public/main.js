@@ -3,7 +3,7 @@
 var token;
 class Utils {
     static BASE_URL = ""; // add backend url if any
-    static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db"; //divij
+    static PASSWORD_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; // add hashed and hexdigest password string here
     static IMG_PATH = "public/img/";
     static EXT = '.png';
     static ENDPOINTS = {
@@ -51,6 +51,7 @@ function getObjArrayFromFormData(e) {
     return arr;
 }
 async function setupPage() {
+    // run only once when the file is first recieved
     console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")), "Incorrect initial class to login and or voting container");
     const res = await fetch(Utils.ENDPOINTS.candidates);
     const candidateData = await res.json();
@@ -73,7 +74,7 @@ async function setupPage() {
             currCandidateRadio.setAttribute("value", name);
             currCandidateRadio.setAttribute("id", id);
             const candidate_name = document.createElement("span");
-            candidate_name.textContent = name;
+            candidate_name.textContent = Utils.normalize(name);
             const candidate_img = document.createElement("img");
             candidate_img.setAttribute("src", Utils.IMG_PATH + encodeURIComponent(name) + Utils.EXT);
             const l = document.createElement("label");
@@ -88,6 +89,7 @@ async function setupPage() {
         voteForm.append(candidatesRow);
     }
     const sb = document.createElement("button");
+    sb.disabled = true;
     sb.setAttribute("type", "submit");
     sb.setAttribute("id", "submit_button");
     sb.textContent = "Submit Vote";

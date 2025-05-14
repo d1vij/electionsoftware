@@ -141,7 +141,6 @@ async def getResultGraphs() -> list[str]:
                 try:
                     post_name = vote["post"]
                     voted_candidate = vote['name']
-                    print(f"{voted_candidate=}")
                     curPostCandidates = compiled_results[post_name]
                     curPostCandidates[voted_candidate] += 1
                 except Exception as e:
