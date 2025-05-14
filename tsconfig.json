@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    // Use the latest supported JS features
     "lib": [
       "ESNext",
       "DOM"
     ],
-    // Include all latest ECMAScript + browser APIs
     "module": "ESNext",
-    // Use native ES module syntax
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "rootDir": "./src/",
+    "outDir": "./public/"
   }
 }
