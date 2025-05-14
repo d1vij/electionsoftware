@@ -1,6 +1,6 @@
 // TODO: Refactor everything 
 
-var token:string;
+var token: string;
 
 interface VoteRequest {
     token: string
@@ -13,12 +13,12 @@ interface Status {
 
 
 class Utils {
-    static BASE_URL = ""
+    static BASE_URL = "" // add backend url if any
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db" //divij
     static IMG_PATH = "public/img/"
     static EXT = '.png'
     static ENDPOINTS = {
-        candidates : `${Utils.BASE_URL}/candidates`,
+        candidates: `${Utils.BASE_URL}/candidates`,
         token: `${Utils.BASE_URL}/gettoken`,
         voteapp: `${Utils.BASE_URL}/voteapp`,
         subtmitvotes: `${Utils.BASE_URL}/submitvotes`
@@ -36,14 +36,14 @@ class Utils {
     }
 }
 
-function toggleVisibility (){
+function toggleVisibility() {
     loginDiv.classList.toggle("hidden");
     votingDiv.classList.toggle("hidden");
 }
 
-function getObjArrayFromFormData(e : FormData):Object[]   {
+function getObjArrayFromFormData(e: FormData): Object[] {
     /*
-    converts form data into array of objects
+    converts form data into array of objects of format
     [
         {
           "name": "divij",
@@ -56,27 +56,24 @@ function getObjArrayFromFormData(e : FormData):Object[]   {
       ]
      */
 
-    let arr: Object[] =[]
-    e.forEach((name, post)=>{
-        // value, key isntead of key, value
-        
-        // @ts-ignore
+    let arr: Object[] = []
+    e.forEach((name, post) => { // value, key isntead of key, value
         arr.push({
-            "name":name,
-            "post":post
+            "name": name,
+            "post": post
         })
     })
     return arr
 }
 
-async function setupPage(){
-	console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")),"Incorrect initial class to login and or voting container");
+async function setupPage() {
+    console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")), "Incorrect initial class to login and or voting container");
 
     const res = await fetch(Utils.ENDPOINTS.candidates);
     const candidateData = await res.json();
 
     // setting up content inside vote form
-    for(const post in candidateData){
+    for (const post in candidateData) {
         const candidates = candidateData[post];
 
         const candidatesRow = document.createElement("div"); // all candidates for same post in a common row div
@@ -88,8 +85,8 @@ async function setupPage(){
         candidatesRow.classList.add("candidates-row")
         candidatesRow.append(postTitle);
 
-        for(const name of candidates){
-            const id = post+name;
+        for (const name of candidates) {
+            const id = post + name;
             const currCandidateDiv = document.createElement("div");
             currCandidateDiv.classList.add("candidate");
 
@@ -97,7 +94,7 @@ async function setupPage(){
             currCandidateRadio.setAttribute("type", "radio");
             currCandidateRadio.setAttribute("name", post);
             currCandidateRadio.setAttribute("value", name);
-            currCandidateRadio.setAttribute("id",id);
+            currCandidateRadio.setAttribute("id", id);
 
 
             const candidate_name = document.createElement("span");
@@ -107,7 +104,7 @@ async function setupPage(){
             candidate_img.setAttribute("src", Utils.IMG_PATH + encodeURIComponent(name) + Utils.EXT);
 
             const l = document.createElement("label");
-            l.setAttribute("for",id);
+            l.setAttribute("for", id);
             l.classList.add("candidate-label");
             l.append(candidate_img)
             l.append(candidate_name)
@@ -129,36 +126,36 @@ async function setupPage(){
     console.log("Setup done");
 }
 
-async function submitVote(event : Event) {
-    try{
+async function submitVote(event: Event) {
+    try {
         event.preventDefault();
         //disabling the submit button once pressed
-        (document.getElementById("submit_button") as HTMLButtonElement)!.disabled = true 
+        (document.getElementById("submit_button") as HTMLButtonElement)!.disabled = true
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
 
-        let data : VoteRequest = {
-            token:token,
+        let data: VoteRequest = {
+            token: token,
             vote_data: getObjArrayFromFormData(formData)
 
         }
         console.log(data)
         const response = await fetch(Utils.ENDPOINTS.subtmitvotes, {
             method: "POST",
-            headers:{
-                "Content-Type":"application/json"
+            headers: {
+                "Content-Type": "application/json"
             },
-            body:JSON.stringify(data)
+            body: JSON.stringify(data)
         });
 
-        const result:Status = await response.json();
-        if(result.status=="success"){
+        const result: Status = await response.json();
+        if (result.status == "success") {
             voteResolution("Vote successfull")
             toggleVisibility();
             voteForm.reset();
         }
-        else{
-            voteResolution(`Vote Failed : ${result.status} `,true)
+        else {
+            voteResolution(`Vote Failed : ${result.status} `, true)
             throw new Error("Vote processing failed");
         }
 
@@ -167,19 +164,19 @@ async function submitVote(event : Event) {
     }
 }
 
-function voteResolution(message : string,e=false){
+function voteResolution(message: string, e = false) {
     resolutionHeader.textContent = message
-    e ? resolutionHeader.classList.add("error")  : resolutionHeader.classList.remove("error");
+    e ? resolutionHeader.classList.add("error") : resolutionHeader.classList.remove("error");
 }
 
 
-async function loadVoting(){
+async function loadVoting() {
     const pe = document.getElementById("password") as HTMLInputElement
     const phash = await Utils.sha256(pe.value);
-    if(phash === Utils.PASSWORD_HASH){
+    if (phash === Utils.PASSWORD_HASH) {
         const tResponse = await fetch(Utils.ENDPOINTS.token);
         token = (await tResponse.json()).token;
-        
+
         //DEBUG
         console.log(token);
         (document.getElementById("submit_button") as HTMLButtonElement).disabled = false

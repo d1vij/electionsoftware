@@ -2,7 +2,7 @@
 // TODO: Refactor everything 
 var token;
 class Utils {
-    static BASE_URL = "";
+    static BASE_URL = ""; // add backend url if any
     static PASSWORD_HASH = "bae35f2615069b212f493f0d5f57d2af94b1c2ad9fbee222f4f96b8d4eaa34db"; //divij
     static IMG_PATH = "public/img/";
     static EXT = '.png';
@@ -29,7 +29,7 @@ function toggleVisibility() {
 }
 function getObjArrayFromFormData(e) {
     /*
-    converts form data into array of objects
+    converts form data into array of objects of format
     [
         {
           "name": "divij",
@@ -43,8 +43,6 @@ function getObjArrayFromFormData(e) {
      */
     let arr = [];
     e.forEach((name, post) => {
-        // value, key isntead of key, value
-        // @ts-ignore
         arr.push({
             "name": name,
             "post": post

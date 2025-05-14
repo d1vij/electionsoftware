@@ -10,7 +10,7 @@
     <div id="plots"></div>
     
     <script>
-        async function f () {
+        (async () =>{
             console.log("result query sent")
             const plots = document.getElementById('plots')
             const res = await fetch('/result-images')
@@ -23,8 +23,7 @@
                 plots.append(e);
                 console.log(`Plotted plot ${i+1}`);
             }
-        }
-        f()
+        })()
     </script>
 </body>
 </html>
