@@ -20,7 +20,7 @@ candidate_data = {
 }
 
 
-CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1" # add connection string here
+CONNECTIONSTRING = "" # ADD CONNNECTION STRING HERE
 URL = ""
 PORT = None
 
