@@ -96,3 +96,19 @@ $ uvicorn api.main:app --port 9000
 
 ![](votescreen.png)
 ![](results.png)
+
+<hr>
+
+## Tech stack used
+* Frontend
+  * Typescript
+  * Html (+css)
+
+* Backend
+  * FastAPI - main backend api server
+  * Uvicron - ASGI
+  * Motor - asynchronous mongodb connector
+  * Matplotlib - generating graphs
+  
+  
+<hr>
