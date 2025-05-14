@@ -115,12 +115,13 @@ async function submitVote(event) {
         });
         const result = await response.json();
         if (result.status == "success") {
-            voteResolution("Vote successfull");
+            voteResolution("Voted successfully!");
             toggleVisibility();
             voteForm.reset();
         }
         else {
             voteResolution(`Vote Failed : ${result.status} `, true);
+            console.log(result.status);
             throw new Error("Vote processing failed");
         }
     }
