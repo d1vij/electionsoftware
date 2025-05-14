@@ -1,5 +1,4 @@
-// TODO: Refactor everything 
-
+// always compile to js
 var token: string;
 
 interface VoteRequest {
@@ -18,7 +17,7 @@ class Utils {
     static IMG_PATH = "public/img/"
     static EXT = '.png'
     static ENDPOINTS = {
-        candidates: `${Utils.BASE_URL}/candidates`,
+        candidates: `${Utils.BASE_URL}/getcandidates`,
         token: `${Utils.BASE_URL}/gettoken`,
         voteapp: `${Utils.BASE_URL}/voteapp`,
         subtmitvotes: `${Utils.BASE_URL}/submitvotes`
@@ -150,12 +149,13 @@ async function submitVote(event: Event) {
 
         const result: Status = await response.json();
         if (result.status == "success") {
-            voteResolution("Vote successfull")
+            voteResolution("Voted successfully!")
             toggleVisibility();
             voteForm.reset();
         }
         else {
             voteResolution(`Vote Failed : ${result.status} `, true)
+            console.log(result.status)
             throw new Error("Vote processing failed");
         }
 

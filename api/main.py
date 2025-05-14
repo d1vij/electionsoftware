@@ -14,10 +14,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorCollection
 
-from .utils import CONNECTIONSTRING
 from .utils import DATABASE_NAME
+from .utils import CONNECTIONSTRING
 from .utils import URL
-from .utils import PORT
 from .utils import SRC_PATH
 from .utils import MAIN_HTML_PATH
 from .utils import candidate_data
@@ -28,6 +27,7 @@ from .utils import ACTIVE_COLLECTION
 
 from .models import VoteResponse
 
+import os
 from io import BytesIO
 from base64 import b64encode
 import asyncio
@@ -52,15 +52,15 @@ class DatabaseWrapper:
             self.client = AsyncIOMotorClient(url, port)
         else:
             Log.warning("INVALID CONNECTION PARAMETERS PROVIDED")
-            raise Exception()
+            # raise Exception()
+
 
         self.database = self.client.get_database(database)
 
     async def add_to_collection(self, *, collection: str, data: dict):
         """inserts provided dictionary as it is into provided collection"""
         try:
-            collection: AsyncIOMotorCollection = self.database.get_collection(
-                collection)
+            collection: AsyncIOMotorCollection = self.database.get_collection(collection)
             insertion_response = await collection.insert_one(data)
             if insertion_response.acknowledged:
                 # insertion success
@@ -68,6 +68,7 @@ class DatabaseWrapper:
             else:
                 return False
         except Exception as e:
+            print(e)
             Log.warning(e)
 
     async def fetchResults(self, *, collection: str, query={}) -> list[VoteResponse]:
@@ -80,8 +81,6 @@ class DatabaseWrapper:
 
 connObj = DatabaseWrapper(
     connection_string=CONNECTIONSTRING,
-    url=URL,
-    port=PORT,
     database=DATABASE_NAME
 )
 
@@ -185,9 +184,9 @@ class API:
 
             # model_dump method converts the incoming form data to VoteResponse formatted dict
             insertionStatus = await self.connection.add_to_collection(collection=ACTIVE_COLLECTION, data=request.model_dump())
-            print(request.model_dump())
+            Log.info(request.model_dump())
             if insertionStatus == True:
-                return {"status": "Voted successfully!"}
+                return {"status": "success"}
             else:
                 Log.warning("Error in inserting votes")
                 return {"status": "Error in votes upload, call for help"}

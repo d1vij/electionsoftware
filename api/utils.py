@@ -2,7 +2,6 @@ import hashlib
 import time
 import os
 import chalk
-
 from .models import VoteResponse
 
 
@@ -21,8 +20,7 @@ candidate_data = {
 }
 
 
-# totally not leaked database info here
-CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1"
+CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1" # add connection string here
 URL = ""
 PORT = None
 
@@ -55,15 +53,15 @@ def generate_token() -> str:
 class Log:
     """simple logging class"""
     @classmethod
-    def warning(message: str):
-        print(chalk.red.bold(f"[X] {str}"))
+    def warning(cls ,message: str):
+        print(chalk.red(f"[X] {message}"))
 
     @classmethod
-    def success(message: str):
+    def success(cls, message: str):
         print(chalk.green(f"[✓] {message}"))
 
     @classmethod
-    def info(message: str):
+    def info(cls, message: str):
         print(chalk.blue(f"[*] {message}"))
 
 
