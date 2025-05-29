@@ -3,13 +3,14 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Voting Software</title>
-		<script src="../public/main.js" defer ></script>
-		<link rel="stylesheet" href="./public/style.css">
+		<script src="../../public/main.js" defer ></script>
+		<link rel="stylesheet" href="../../public/style.css">
 	</head>
 	<body>
 		<div id="login_container" class="">
 			<input type="password" placeholder="Password" value="" name="password" id="password">
 			<button id="submit_password">Go to voting</button>
+			<h1 id="resolution"></h1>
 		</div>
 		<div id="voting_container" class="hidden">
 			<form id="vote_form">
@@ -17,8 +18,9 @@
 				
 			</form>
 		</div>
-		<h1 id="resolution"></h1>
-		
+		<div class="footer">
+			<p><b>divij@2025</b></p>
+		</div>
 		
 	</body>
 </html>

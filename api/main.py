@@ -60,8 +60,8 @@ class DatabaseWrapper:
     async def add_to_collection(self, *, collection: str, data: dict):
         """inserts provided dictionary as it is into provided collection"""
         try:
-            collection: AsyncIOMotorCollection = self.database.get_collection(collection)
-            insertion_response = await collection.insert_one(data)
+            _collection: AsyncIOMotorCollection = self.database.get_collection(collection)
+            insertion_response = await _collection.insert_one(data)
             if insertion_response.acknowledged:
                 # insertion success
                 return True
@@ -69,13 +69,13 @@ class DatabaseWrapper:
                 return False
         except Exception as e:
             print(e)
-            Log.warning(e)
+            Log.warning(str(e))
 
     async def fetchResults(self, *, collection: str, query={}) -> list[VoteResponse]:
         """fetches all results as per query, query defaults to {} if nothing provided"""
 
-        collection: AsyncIOMotorCollection = self.database[collection]
-        cursor = collection.find(query)
+        _collection: AsyncIOMotorCollection = self.database[collection]
+        cursor = _collection.find(query)
         return await cursor.to_list()
 
 
@@ -91,7 +91,7 @@ async def makeGraph(post, vote_dict) -> str:
     names, counts = zip(*sorted_items)
     plt.figure(figsize=(6, 3.5))
     plt.title(post)
-    colors = plt.cm.viridis([i / len(names) for i in range(len(names))])
+    colors = plt.cm.viridis([i / len(names) for i in range(len(names))]) # type: ignore
     bars = plt.bar(names, counts, color=colors)
     plt.grid(axis='y', linestyle='--', alpha=0.5)
     for bar, count in zip(bars, counts):
@@ -123,31 +123,32 @@ async def getResultGraphs() -> list[str]:
     """
 
     all_documents: list[VoteResponse] = await connObj.fetchResults(collection=ACTIVE_COLLECTION)
-
-    compiled_results = {p: dict.fromkeys(
-        candidate_data[p], 0) for p in candidate_data.keys()}
+    compiled_results = {p: dict.fromkeys(candidate_data[p], 0) for p in candidate_data.keys()}
 
     print("Empty results dict")
-    pprint(compiled_results)
+    pprint(compiled_results,indent=2)
 
     Log.info(f"Total documents found {len(all_documents)}")
 
     seen_tokens = []
+    document: VoteResponse
     # updating votes from results
     for document in all_documents:
-        if not (document["token"] in seen_tokens):
-            seen_tokens.append(document['token'])
-            for vote in document['vote_data']:
-                try:
-                    post_name = vote["post"]
-                    voted_candidate = vote['name']
-                    curPostCandidates = compiled_results[post_name]
-                    curPostCandidates[voted_candidate] += 1
-                except Exception as e:
-                    Log.warning(e)
-
-    # making graphs
-    # asyncio.gather() equivalent to js Promises.all()
+        try:
+            token = document['token']              # type: ignore
+            if not (token in seen_tokens):
+                seen_tokens.append(token)
+                for vote in document['vote_data']: # type: ignore
+                    try:
+                        post_name = vote["post"]
+                        voted_candidate = vote['name']
+                        curPostCandidates = compiled_results[post_name]
+                        curPostCandidates[voted_candidate] += 1
+                    except Exception as e:
+                        Log.warning(str(e))
+        except Exception as e:
+            print(document)
+            exit()
     img_data = await asyncio.gather(*[makeGraph(post, vote_dict) for post, vote_dict in compiled_results.items()])
 
     pprint(compiled_results)
@@ -183,7 +184,7 @@ class API:
 
             # model_dump method converts the incoming form data to VoteResponse formatted dict
             insertionStatus = await self.connection.add_to_collection(collection=ACTIVE_COLLECTION, data=request.model_dump())
-            Log.info(request.model_dump())
+            Log.info(request.model_dump()) # type: ignore
             if insertionStatus == True:
                 return {"status": "success"}
             else:
@@ -219,4 +220,5 @@ class API:
             return MAIN_FILE
 
 
-app = API().app
+if __name__=="__main__":
+    app = API().app

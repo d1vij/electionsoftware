@@ -83,7 +83,7 @@ if __name__ == "__main__":
             vd = []
             posts = list(candidate_data.keys())
             for p in posts:
-                c = random.choice(candidate_data.get(p))
+                c = random.choice(candidate_data.get(p)) # type: ignore | shut up pylance
                 vd.append({"name": c, "post": p})
             e = {"token": t, "vote_data": vd}
             l.append(e)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         working_collection.delete_many({})
 
 
-    o = input("what 1.fakevotes 2.delete all votes- PLEASEDELETEVOTES :>")
+    o = input("what 1.fakevotes 2.delete all votes- PLEASEDELETEVOTES >")
     match o:
         case "fakevotes":
             post_data(generate_data(
