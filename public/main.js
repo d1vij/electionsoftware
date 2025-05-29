@@ -1,54 +1,8 @@
-"use strict";
-// always compile to js
+import { Utils, getObjArrayFromFormData } from "./utils.js";
 var token;
-class Utils {
-    static BASE_URL = ""; // add backend url if any
-    static PASSWORD_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; // add hashed and hexdigest password string here
-    static IMG_PATH = "public/img/";
-    static EXT = '.png';
-    static ENDPOINTS = {
-        candidates: `${Utils.BASE_URL}/getcandidates`,
-        token: `${Utils.BASE_URL}/gettoken`,
-        voteapp: `${Utils.BASE_URL}/voteapp`,
-        subtmitvotes: `${Utils.BASE_URL}/submitvotes`
-    };
-    static async sha256(message) {
-        //bad of js to not have a default hashing library or function
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-    static normalize(str) {
-        return (str.charAt(0).toUpperCase() + str.substring(1)).replace('_', ' ');
-    }
-}
 function toggleVisibility() {
     loginDiv.classList.toggle("hidden");
     votingDiv.classList.toggle("hidden");
-}
-function getObjArrayFromFormData(e) {
-    /*
-    converts form data into array of objects of format
-    [
-        {
-          "name": "divij",
-          "post": "head_boy"
-        },
-        {
-          "name": "abc",
-          "post": "head_girl"
-        }
-      ]
-     */
-    let arr = [];
-    e.forEach((name, post) => {
-        arr.push({
-            "name": name,
-            "post": post
-        });
-    });
-    return arr;
 }
 async function setupPage() {
     // run only once when the file is first recieved
@@ -117,12 +71,12 @@ async function submitVote(event) {
         });
         const result = await response.json();
         if (result.status == "success") {
-            voteResolution("Voted successfully!");
+            setVoteResolution("Voted successfully!");
             toggleVisibility();
             voteForm.reset();
         }
         else {
-            voteResolution(`Vote Failed : ${result.status} `, true);
+            setVoteResolution(`Vote Failed : ${result.status} `, true);
             console.log(result.status);
             throw new Error("Vote processing failed");
         }
@@ -131,9 +85,9 @@ async function submitVote(event) {
         console.log("Error : ", err);
     }
 }
-function voteResolution(message, e = false) {
+function setVoteResolution(message, errorOccured = false) {
     resolutionHeader.textContent = message;
-    e ? resolutionHeader.classList.add("error") : resolutionHeader.classList.remove("error");
+    errorOccured ? resolutionHeader.classList.add("error") : resolutionHeader.classList.remove("error");
 }
 async function loadVoting() {
     const pe = document.getElementById("password");
@@ -145,7 +99,7 @@ async function loadVoting() {
         console.log(token);
         document.getElementById("submit_button").disabled = false;
         pe.value = "";
-        voteResolution("");
+        setVoteResolution("");
         toggleVisibility();
     }
     else {

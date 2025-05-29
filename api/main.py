@@ -220,5 +220,4 @@ class API:
             return MAIN_FILE
 
 
-if __name__=="__main__":
-    app = API().app
+app = API().app
