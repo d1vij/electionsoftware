@@ -94,7 +94,7 @@ $ uvicorn api.main:app --port 9000
 <hr>
 <br>
 
-![](votescreen.png)
+![](voteapp.png)
 ![](results.png)
 
 <hr>
