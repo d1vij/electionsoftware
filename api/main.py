@@ -16,7 +16,6 @@ from motor.motor_asyncio import AsyncIOMotorCollection
 
 from .utils import DATABASE_NAME
 from .utils import CONNECTIONSTRING
-from .utils import URL
 from .utils import SRC_PATH
 from .utils import MAIN_HTML_PATH
 from .utils import candidate_data
@@ -78,6 +77,7 @@ class DatabaseWrapper:
         cursor = _collection.find(query)
         return await cursor.to_list()
 
+if(CONNECTIONSTRING==""): exit("CONNECTION STRING WAS NOT SET IN UTILS.py!!!")
 
 connObj = DatabaseWrapper(
     connection_string=CONNECTIONSTRING,
@@ -118,8 +118,7 @@ async def makeGraph(post, vote_dict) -> str:
 
 async def getResultGraphs() -> list[str]:
     """
-    requests all vote documents and returns array of base64 encoded string of graph image bytes
-    -> each graph's string is in format "data:image/png;base64,<b64str>" and the image can be rendered directly in frontend by setting img src to the string
+    generates result graphs for each post and returns array of dataurls corresponding to each graph 
     """
 
     all_documents: list[VoteResponse] = await connObj.fetchResults(collection=ACTIVE_COLLECTION)
@@ -206,8 +205,8 @@ class API:
 
         @self.app.get("/getcandidates")
         async def get_candidate_data():
-            # NOTE:candidate data could probably just kept in the script
-            return candidate_data
+            # candidate data could be tampered with if kept as it is in frontend
+            return candidate_data   
 
         @self.app.get("/gettoken")
         async def get_token():
@@ -219,5 +218,8 @@ class API:
             """main voting app uri"""
             return MAIN_FILE
 
-
+        @self.app.get('/')
+        async def _() -> dict:
+            return {"server-status":"working",
+                    "database-status":"if this page loaded then database connection was successfull :)))"}
 app = API().app

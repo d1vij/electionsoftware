@@ -8,23 +8,19 @@ import pymongo
 
 """Change candidate data here
 NOTE: Candidate names are CASE SENSITIVE
-"""
-candidate_data = {
+
+eg {
     "head_boy": ["Divij", "Rohan", "Aditya", "Karan", "Nishant"],
     "head_girl": ["Aisha", "Shruti", "Meera", "Anita", "Priya"],
-    "sports_captain": ["Rahul", "Arjun", "Vivek", "Kavya", "Tarun"],
-    "cultural_secretary": ["Neha", "Tanya", "Tina", "Mira", "Rhea"],
-    "discipline_incharge": ["Naman", "Simran", "Raj", "Rehan", "Bhavya"],
-    "tech_leader": ["Zoya", "Sid", "Manav", "Kabir", "Hardik"],
-    "eco_head": ["Isha", "Dev", "Parth", "Veer", "Lavanya"],
-    "media_incharge": ["Mehul", "Anaya", "Krishna", "Sarthak", "Niharika"]
-}
+    "sports_captain": ["Rahul", "Arjun", "Vivek", "Kavya", "Tarun"]
+    }
+"""
+candidate_data = {}
 
+CONNECTIONSTRING = "" # ADD CONNNECTION STRING HERE
 
-
-CONNECTIONSTRING = "mongodb+srv://vermadivij:databasepassword@cluster1.lzjrylx.mongodb.net/?retryWrites=true&w=majority&appName=cluster1" # ADD CONNNECTION STRING HERE
-URL = ""
-PORT = None
+# URL = ""     # refactoring required for using them
+# PORT = None
 
 
 # Name of database used in cluster

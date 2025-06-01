@@ -1,4 +1,5 @@
 import { Utils, getObjArrayFromFormData } from "./utils.js";
+
 var token;
 function toggleVisibility() {
     loginDiv.classList.toggle("hidden");
