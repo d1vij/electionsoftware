@@ -7,7 +7,7 @@ class Vote(BaseModel):
 
 
 class VoteResponse(BaseModel) :
-    token: str | None = None
+    token: str 
     vote_data: list[Vote]
     """
     {

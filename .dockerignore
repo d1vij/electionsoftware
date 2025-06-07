@@ -1,0 +1,8 @@
+node_modules/
+.env
+**/__pycache__/
+venv
+Procfile
+readme.md 
+voteapp.png
+votescreen.png

@@ -1,0 +1,134 @@
+body{
+    background: #b9b9b9;
+}
+
+.overlay {
+    background-color: aqua;
+
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay.visible {
+    display: flex !important;
+}
+
+.overlay-content {
+    background-color: antiquewhite;
+    padding: 20px;
+
+    width: max-content;
+    height: max-content;
+
+    border-radius: 8px;
+    text-align: center;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+#close-popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    height: fit-content;
+    width: 120px;
+    font-size: 100px;
+
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-self: center;
+}
+
+.posts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.post-div {
+    background-color: antiquewhite;
+    border-style: dotted;
+    border-width: 1px;
+    width: fit-content;
+    text-align: center;
+}
+
+.candidate-list {
+    display: flex;
+    flex-direction: row;
+    width: 550px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.post-title {
+    font-style: italic;
+    text-align: center;
+}
+
+.candidate-list-item {
+    background-color: bisque;
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.candidate-row {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+}
+
+.candidate-preview-image {
+    height: 120px;
+    width: 120px;
+}
+
+.image-input {
+}
+
+
+.add-candidate-button {
+    height: fit-content;
+    font-size: medium;
+    align-self: center;
+
+}
+
+.post-delete-button {
+    height: fit-content;
+    font-size: medium;
+}
+
+.create-post-button {
+    height: 35px;
+    font-size: 25px;
+    width: 550px;
+    align-self: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.submit-button {
+    height: 35px;
+    font-size: 25px;
+    width: 550px;
+    align-self: center;
+}
+

@@ -1,10 +1,8 @@
-import hashlib
-import time
 import os
 import chalk
 import random
 import pymongo
-
+import uuid
 
 """Change candidate data here
 NOTE: Candidate names are CASE SENSITIVE
@@ -44,9 +42,7 @@ origins = ["*"]
 
 
 def generate_token() -> str:
-    """retuns a token / sha256 hashed string based on time of call"""
-    return hashlib.sha256(str(time.time()).encode('utf-8')).hexdigest()
-
+    return uuid.uuid4().__str__()
 
 class Log:
     """simple logging class"""

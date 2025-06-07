@@ -12,5 +12,6 @@
     "skipLibCheck": true,
     "rootDir": "./src/",
     "outDir": "./public/"
-  }
+  },
+  "exclude": ["user-registerer"]
 }

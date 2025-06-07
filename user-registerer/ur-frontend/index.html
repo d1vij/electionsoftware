@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register candidates</title>
+    <link rel="stylesheet" href="./public/style.css">    
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <div id="content">
+      <div class="posts"></div>
+    </div>
+
+    <div id="popup" class="overlay">
+      <button id="close-popup">X</button>
+      <div id="popup-content" class="overlay-content"></div>
+    </div>
+    <script>
+      document.getElementById("close-popup").addEventListener("click",()=>{
+        document.getElementById("popup-content").innerHTML = "";
+        document.getElementById("popup").classList.toggle("visible")
+      })
+    </script>
+  </body>
+</html>
