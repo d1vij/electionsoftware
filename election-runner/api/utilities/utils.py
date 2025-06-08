@@ -5,6 +5,7 @@ import pymongo
 import json
 from pathlib import Path
 from dotenv import  load_dotenv
+import hashlib
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -58,6 +59,7 @@ DATABASE_NAME = os.getenv("DATABASE_NAME")
 ACTIVE_COLLECTION = os.getenv("ACTIVE_COLLECTION")
 print(CONNECTIONSTRING)
 candidate_data = getCandidateDataDict()
+PASSWORD_HASH = hashlib.sha256(os.getenv("PASSWORD").encode()).hexdigest()
 
 if __name__ == "__main__":
     client = pymongo.MongoClient(CONNECTIONSTRING)

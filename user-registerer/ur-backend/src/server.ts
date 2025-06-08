@@ -51,6 +51,13 @@ app.use("/", express.static(FRONTEND_STATIC_FOLDER_PATH));
 app.use("/", express.static(CANDIDATE_DATA_JSON_PATH));
 app.use(express.json());
 
+app.get("/",(_, response)=>{
+    response.redirect("/index.html")
+})
+app.get("/register",(_, response)=>{
+    response.redirect("/index.html")
+})
+
 
 app.post("/post/images", uploadHandler.any(), (request, response) => {
     // response.json({uploaded: request.files?.map((f:Multer.File) => f.filename)});

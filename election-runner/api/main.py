@@ -1,3 +1,4 @@
+"""@d1vij"""
 """
 Main uris 
 -> /voteapp
@@ -14,7 +15,7 @@ from fastapi.responses import RedirectResponse
 from .utilities.utils import SRC_PATH
 from .utilities.utils import origins
 from .utilities.utils import Log
-from .utilities.utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION
+from .utilities.utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION, PASSWORD_HASH
 
 from .utilities.results import getResultGraphs
 from .utilities.models import VoteResponse
@@ -80,6 +81,9 @@ class API:
         async def get_result_page():
             """loads result page"""
             return RedirectResponse("/public/html/results.html")
+        @self.app.get("/password-hash")
+        async def get_password_hash():
+            return {"password_hash":PASSWORD_HASH}
 
         @self.app.get("/gettoken")
         async def get_token():

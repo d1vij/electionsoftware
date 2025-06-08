@@ -1,3 +1,4 @@
+/** @d1vij */
 import { Utils,getObjArrayFromFormData } from "./utils.js";
 
 var token: string;
@@ -34,11 +35,8 @@ function toggleVisibility() {
 
 async function setup() {
     console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")), "Incorrect initial class to login and or voting container");
-    let response = await fetch("/public/data/password_hash.json");
-
-    Utils.PASSWORD_HASH = (await response.json()).password_hash;
-    console.log(Utils.PASSWORD_HASH) //DEBUG
-
+    let response = await fetch("/password-hash")
+    Utils.PASSWORD_HASH = (await response.json()).password_hash || "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
 
     response = await fetch("/public/candidate-data/candidates.json");
     const candidateData:TCandidateData = await response.json();
