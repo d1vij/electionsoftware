@@ -7,7 +7,8 @@ A lightweight, asynchronous voting application with a MongoDB backend. It consis
 Built using FastAPI and Express.js, and containerized using Docker for easy deployment.
 
 ---
-
+> [!INFO]
+> [Prebuilt Image](docker pull d1vij/es-image:080725) just edit .env
 ## Installation
 
 ### 1. Clone the Repository
