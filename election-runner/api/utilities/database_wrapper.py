@@ -1,7 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.motor_asyncio import AsyncIOMotorCollection
-from api.utilities.models import VoteResponse
-from api.utils import Log
+from .models import VoteResponse
+from .utils import Log
 
 class DatabaseWrapper:
     """wrapper class for database connections"""

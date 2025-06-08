@@ -2,28 +2,26 @@ import os
 import chalk
 import random
 import pymongo
-import uuid
 import json
 from pathlib import Path
 from dotenv import  load_dotenv
-load_dotenv(dotenv_path=Path(".env")) # .env file in the root directory
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Source path -> js, css
-SRC_PATH = os.path.join(BASE_DIR, "..", "public")
+SRC_PATH = os.path.join(BASE_DIR, "../../", "public")
 CANDIDATE_DATA_PATH = os.path.join(SRC_PATH,"candidate-data")
+DOTENV_PATH = os.path.join(BASE_DIR, "../../../.env")
 # Vote app file path
 MAIN_HTML_PATH = os.path.join(SRC_PATH, "html", "main.html")
-print(f"{SRC_PATH=}, {MAIN_HTML_PATH=}")
+print(CANDIDATE_DATA_PATH)
+
+load_dotenv(dotenv_path=Path(DOTENV_PATH)) # .env file in the root directory
 
 
 # Allowed CORS origins
 origins = ["*"]
 
-
-def generate_token() -> str:
-    return uuid.uuid4().__str__()
 
 class Log:
     """simple logging class"""

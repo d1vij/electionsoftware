@@ -11,15 +11,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
-from .utils import SRC_PATH
-from .utils import origins
-from .utils import Log
-from .utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION
+from .utilities.utils import SRC_PATH
+from .utilities.utils import origins
+from .utilities.utils import Log
+from .utilities.utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION
 
-
-from api.utilities.results import getResultGraphs
-from api.utilities.models import VoteResponse
-from api.utilities.database_wrapper import DatabaseWrapper
+from .utilities.results import getResultGraphs
+from .utilities.models import VoteResponse
+from .utilities.database_wrapper import DatabaseWrapper
 
 
 #Loading env variables

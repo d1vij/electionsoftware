@@ -4,11 +4,11 @@ from io import BytesIO
 from base64 import b64encode
 import asyncio
 from pprint import pprint
-from api.utilities.models import VoteResponse
-from api.utilities.database_wrapper import DatabaseWrapper
+from .models import VoteResponse
+from .database_wrapper import DatabaseWrapper
 
-from api.utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION,candidate_data
-from api.utils import Log
+from .utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION,candidate_data
+from .utils import Log
 
 
 async def makeGraph(post, vote_dict) -> str:

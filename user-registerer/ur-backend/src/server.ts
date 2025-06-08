@@ -1,12 +1,29 @@
+/**
+ * Server for user registerer
+
+ * static files in /user-registerer/ur-frontend/dist/
+ * saves images & candidate data in /election-runner/public/candidate-data/
+ *
+ * -> To register candidates, simply node run this file and go to /index.html
+ * NOTE: Existing Candidates data is not re-loaded again, which means even for a single edit,
+ *       all the candidates have to be registered, or otherwise candidate data can be edited manually
+ *       ensuring that each candidate has a unique uuid (candidateId) and its corresponding image in /image/ folder
+ *
+ * -> Image of candidates are saved with candidates uuid as filename and as .png extension irrespective of source extension
+ **/
+
+
 import express from "express";
 import * as path from "path";
 import multer from "multer";
 import fs from "fs/promises";
 
 
-const FRONTEND_STATIC_FOLDER_PATH = path.join(__dirname, "..", "..", "ur-frontend", "dist");
-const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../../public/candidate-data/candidates.json");
-const CANDIDATE_IMAGES_PATH = path.join(__dirname, "../../../public/candidate-data/images");
+const FRONTEND_STATIC_FOLDER_PATH = path.join(__dirname, "../../ur-frontend/dist");
+
+//these should point to public directory of main election app
+const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../../election-runner/public/candidate-data/candidates.json");
+const CANDIDATE_IMAGES_PATH = path.join(__dirname, "../../../election-runner/public/candidate-data/images");
 console.log(CANDIDATE_IMAGES_PATH)
 
 //multer config
@@ -23,7 +40,7 @@ const storage = multer.diskStorage({
 const uploadHandler = multer({storage: storage})
 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 
 app.use((req, _, next) => {
