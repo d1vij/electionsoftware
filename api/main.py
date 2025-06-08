@@ -4,80 +4,28 @@ Main uris
 -> /results
 
 """
+from uuid import uuid4
 
-
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
-from motor.motor_asyncio import AsyncIOMotorClient
-from motor.motor_asyncio import AsyncIOMotorCollection
-
-from .utils import DATABASE_NAME
-from .utils import CONNECTIONSTRING
 from .utils import SRC_PATH
-from .utils import MAIN_HTML_PATH
-from .utils import candidate_data
-from .utils import generate_token
 from .utils import origins
 from .utils import Log
-from .utils import ACTIVE_COLLECTION
-
-from .models import VoteResponse
-
-import os
-from io import BytesIO
-from base64 import b64encode
-import asyncio
-import aiofiles
-from pprint import pprint
-import matplotlib.pyplot as plt
+from .utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION
 
 
-with open(MAIN_HTML_PATH, mode="r") as file:
-    MAIN_FILE = HTMLResponse(content=file.read())
+from api.utilities.results import getResultGraphs
+from api.utilities.models import VoteResponse
+from api.utilities.database_wrapper import DatabaseWrapper
 
 
-class DatabaseWrapper:
-    """wrapper class for database connections"""
-
-    def __init__(self, *, connection_string=None, url=None, port=None, database: str):
-        """Provite either the databse uri/connection string or url and port along with the database name as kwargs"""
-
-        if connection_string:
-            self.client = AsyncIOMotorClient(connection_string)
-        elif url and port:
-            self.client = AsyncIOMotorClient(url, port)
-        else:
-            Log.warning("INVALID CONNECTION PARAMETERS PROVIDED")
-            # raise Exception()
+#Loading env variables
 
 
-        self.database = self.client.get_database(database)
-
-    async def add_to_collection(self, *, collection: str, data: dict):
-        """inserts provided dictionary as it is into provided collection"""
-        try:
-            _collection: AsyncIOMotorCollection = self.database.get_collection(collection)
-            insertion_response = await _collection.insert_one(data)
-            if insertion_response.acknowledged:
-                # insertion success
-                return True
-            else:
-                return False
-        except Exception as e:
-            print(e)
-            Log.warning(str(e))
-
-    async def fetchResults(self, *, collection: str, query={}) -> list[VoteResponse]:
-        """fetches all results as per query, query defaults to {} if nothing provided"""
-
-        _collection: AsyncIOMotorCollection = self.database[collection]
-        cursor = _collection.find(query)
-        return await cursor.to_list()
-
-if(CONNECTIONSTRING==""): exit("CONNECTION STRING WAS NOT SET IN UTILS.py!!!")
+if CONNECTIONSTRING in ["", None]: exit("CONNECTION STRING WAS NOT SET IN UTILS.py!!!")
 
 connObj = DatabaseWrapper(
     connection_string=CONNECTIONSTRING,
@@ -85,81 +33,12 @@ connObj = DatabaseWrapper(
 )
 
 
-async def makeGraph(post, vote_dict) -> str:
-    # Sort by vote count (descending)
-    sorted_items = sorted(vote_dict.items(), key=lambda x: x[1], reverse=True)
-    names, counts = zip(*sorted_items)
-    plt.figure(figsize=(6, 3.5))
-    plt.title(post)
-    colors = plt.cm.viridis([i / len(names) for i in range(len(names))]) # type: ignore
-    bars = plt.bar(names, counts, color=colors)
-    plt.grid(axis='y', linestyle='--', alpha=0.5)
-    for bar, count in zip(bars, counts):
-        yval = bar.get_height()
-        plt.text(
-            bar.get_x() + bar.get_width() / 2,
-            yval + max(counts) * 0.015,  # slight vertical offset
-            str(count),
-            ha='center', va='bottom',
-            fontsize=8, color='black'
-        )
-    min_y = min(counts)
-    plt.ylim(min_y - 20, max(counts) + 40)
-    plt.tight_layout()
-
-    buffer = BytesIO()
-
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-
-    # plt.close() # this here causes
-    return f"data:image/png;base64,{b64encode(buffer.read()).decode('utf-8')}"
-
-
-async def getResultGraphs() -> list[str]:
-    """
-    generates result graphs for each post and returns array of dataurls corresponding to each graph 
-    """
-
-    all_documents: list[VoteResponse] = await connObj.fetchResults(collection=ACTIVE_COLLECTION)
-    compiled_results = {p: dict.fromkeys(candidate_data[p], 0) for p in candidate_data.keys()}
-
-    print("Empty results dict")
-    pprint(compiled_results,indent=2)
-
-    Log.info(f"Total documents found {len(all_documents)}")
-
-    seen_tokens = []
-    document: VoteResponse
-    # updating votes from results
-    for document in all_documents:
-        try:
-            token = document['token']              # type: ignore
-            if not (token in seen_tokens):
-                seen_tokens.append(token)
-                for vote in document['vote_data']: # type: ignore
-                    try:
-                        post_name = vote["post"]
-                        voted_candidate = vote['name']
-                        curPostCandidates = compiled_results[post_name]
-                        curPostCandidates[voted_candidate] += 1
-                    except Exception as e:
-                        Log.warning(str(e))
-        except Exception as e:
-            print(document)
-            exit()
-    img_data = await asyncio.gather(*[makeGraph(post, vote_dict) for post, vote_dict in compiled_results.items()])
-
-    pprint(compiled_results)
-    return img_data
 
 
 class API:
     def __init__(self):
         self.app = FastAPI()
-        self.app.mount("/public",
-                       StaticFiles(directory=SRC_PATH),  # for css and js
-                       name="public")
+        self.app.mount("/public",StaticFiles(directory=SRC_PATH),name="public")
 
         self.app.add_middleware(
             CORSMiddleware,  # type: ignore
@@ -179,12 +58,13 @@ class API:
 
         @self.app.post("/submitvotes")
         async def post_votes(request: VoteResponse):
-            """no vote processing occurs here, anything coming from client is direclty inserting into database"""
+            """no vote processing occurs here, anything coming from client is directly inserting into database"""
 
             # model_dump method converts the incoming form data to VoteResponse formatted dict
             insertionStatus = await self.connection.add_to_collection(collection=ACTIVE_COLLECTION, data=request.model_dump())
-            Log.info(request.model_dump()) # type: ignore
-            if insertionStatus == True:
+
+            Log.info(request.model_dump())
+            if insertionStatus==True:
                 return {"status": "success"}
             else:
                 Log.warning("Error in inserting votes")
@@ -197,29 +77,25 @@ class API:
             """helper function to request graphs"""
             return {"imagedata": await getResultGraphs()}
 
-        @self.app.get('/results', response_class=HTMLResponse)
+        @self.app.get('/results')
         async def get_result_page():
             """loads result page"""
-            async with aiofiles.open('./public/html/results.html', 'r', encoding='utf-8') as file:
-                return await file.read()
-
-        @self.app.get("/getcandidates")
-        async def get_candidate_data():
-            # candidate data could be tampered with if kept as it is in frontend
-            return candidate_data   
+            return RedirectResponse("/public/html/results.html")
 
         @self.app.get("/gettoken")
         async def get_token():
-            """retuns unique token through which voting sessions could be tracked"""
-            return {"token": generate_token()}
+            """retuns unique uuid through which voting sessions could be tracked"""
+            return {"token": uuid4()}
 
         @self.app.get('/voteapp')
-        async def get_vote_html() -> HTMLResponse:
+        async def get_vote_html():
             """main voting app uri"""
-            return MAIN_FILE
+            return RedirectResponse("/public/html/main.html")
 
         @self.app.get('/')
-        async def _() -> dict:
-            return {"server-status":"working",
-                    "database-status":"if this page loaded then database connection was successfull :)))"}
+        async def _():
+            return RedirectResponse("/voteapp")
+
+
+
 app = API().app

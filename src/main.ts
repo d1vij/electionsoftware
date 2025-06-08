@@ -2,70 +2,74 @@ import { Utils,getObjArrayFromFormData } from "./utils.js";
 
 var token: string;
 
-interface VoteRequest {
+interface IVoteRequest {
     token: string
     vote_data: Object[]
 }
-
-interface Status {
+interface IStatus {
     status: string
 }
+interface IPostData {
+    name:string,
+    candidates:ICandidate[]
+}
+interface ICandidate {
+    name:string,
+    candidateId:string
+}
 
+type TCandidateData = IPostData[]
 
+/**
+ * Static directory
+ * /public/candidate-data/images/ + candidateuuid + ext -> for candidate image
+ * /public/candidate-data/candidates.json -> for candidate data
+ * /public/data/password_hash.json -> contains password hash
+ **/
 
 function toggleVisibility() {
     loginDiv.classList.toggle("hidden");
     votingDiv.classList.toggle("hidden");
 }
 
-async function setupPage() {
-    // run only once when the file is first recieved
-    
+async function setup() {
     console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")), "Incorrect initial class to login and or voting container");
+    let response = await fetch("/public/data/password_hash.json");
 
-    const res = await fetch(Utils.ENDPOINTS.candidates);
-    const candidateData = await res.json();
+    Utils.PASSWORD_HASH = (await response.json()).password_hash;
+    console.log(Utils.PASSWORD_HASH) //DEBUG
+
+
+    response = await fetch("/public/candidate-data/candidates.json");
+    const candidateData:TCandidateData = await response.json();
 
     // setting up content inside vote form
-    for (const post in candidateData) {
-        const candidates = candidateData[post];
-
-        const candidatesRow = document.createElement("div"); // all candidates for same post in a common row div
+    for (const post of candidateData) {
         const postTitle = document.createElement("h1");
 
         postTitle.classList.add("post-title");
-        postTitle.textContent = Utils.normalize(post); // TODO: Work on normalize function
+        postTitle.textContent = post.name;
 
+        const candidatesRow = document.createElement("div");
         candidatesRow.classList.add("candidates-row")
-        candidatesRow.append(postTitle);
+        candidatesRow.appendChild(postTitle);
 
-        for (const name of candidates) {
-            const id = post + name;
+        for (const candidate of post.candidates) {
+
             const currCandidateDiv = document.createElement("div");
             currCandidateDiv.classList.add("candidate");
 
-            const currCandidateRadio = document.createElement("input");
-            currCandidateRadio.setAttribute("type", "radio");
-            currCandidateRadio.setAttribute("name", post);
-            currCandidateRadio.setAttribute("value", name);
-            currCandidateRadio.setAttribute("id", id);
-
-
-            const candidate_name = document.createElement("span");
-            candidate_name.textContent = Utils.normalize(name);
-
-            const candidate_img = document.createElement("img");
-            candidate_img.setAttribute("src", Utils.IMG_PATH + encodeURIComponent(name) + Utils.EXT);
-
-            const l = document.createElement("label");
-            l.setAttribute("for", id);
-            l.classList.add("candidate-label");
-            l.append(candidate_img)
-            l.append(candidate_name)
-
-
-            currCandidateDiv.append(currCandidateRadio);
-            currCandidateDiv.append(l);
+            /**
+             * For arrangement of child nodes in candidate div, input radio 'must' be a sibling of label containing candidate image and name span
+             * */
+            currCandidateDiv.innerHTML =
+                `
+                <input type="radio" name="${post.name}" value="${candidate.name}" id="${candidate.candidateId}">  
+                <label class="candidate-label" for="${candidate.candidateId}">
+                    <img src="/public/candidate-data/images/${candidate.candidateId}.png" alt="Image-for-${candidate.name}">
+                    <span>${candidate.name}</span>
+                </label>
+                `
             candidatesRow.append(currCandidateDiv);
         }
 
@@ -84,18 +88,19 @@ async function setupPage() {
 async function submitVote(event: Event) {
     try {
         event.preventDefault();
+
         //disabling the submit button once pressed
         (document.getElementById("submit_button") as HTMLButtonElement)!.disabled = true
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
 
-        let data: VoteRequest = {
+        let data: IVoteRequest = {
             token: token,
             vote_data: getObjArrayFromFormData(formData)
 
         }
         console.log(data)
-        const response = await fetch(Utils.ENDPOINTS.subtmitvotes, {
+        const response = await fetch(Utils.ENDPOINTS.submitvotes, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -103,7 +108,7 @@ async function submitVote(event: Event) {
             body: JSON.stringify(data)
         });
 
-        const result: Status = await response.json();
+        const result: IStatus = await response.json();
         if (result.status == "success") {
             setVoteResolution("Voted successfully!")
             toggleVisibility();
@@ -154,7 +159,7 @@ const resolutionHeader = document.getElementById("resolution") as HTMLHeadingEle
 
 
 
-window.addEventListener("load", setupPage);
+window.addEventListener("load", setup);
 voteForm.addEventListener("submit", submitVote);
 document.getElementById("submit_password")?.addEventListener("click", loadVoting);
 

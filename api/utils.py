@@ -3,35 +3,16 @@ import chalk
 import random
 import pymongo
 import uuid
-
-"""Change candidate data here
-NOTE: Candidate names are CASE SENSITIVE
-
-eg {
-    "head_boy": ["Divij", "Rohan", "Aditya", "Karan", "Nishant"],
-    "head_girl": ["Aisha", "Shruti", "Meera", "Anita", "Priya"],
-    "sports_captain": ["Rahul", "Arjun", "Vivek", "Kavya", "Tarun"]
-    }
-"""
-candidate_data = {}
-
-CONNECTIONSTRING = "" # ADD CONNNECTION STRING HERE
-
-# URL = ""     # refactoring required for using them
-# PORT = None
-
-
-# Name of database used in cluster
-DATABASE_NAME = "voting"
-
-# Name of collection used to store all the votes
-ACTIVE_COLLECTION = "votes"
+import json
+from pathlib import Path
+from dotenv import  load_dotenv
+load_dotenv(dotenv_path=Path(".env")) # .env file in the root directory
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Source path -> js, css
 SRC_PATH = os.path.join(BASE_DIR, "..", "public")
-
+CANDIDATE_DATA_PATH = os.path.join(SRC_PATH,"candidate-data")
 # Vote app file path
 MAIN_HTML_PATH = os.path.join(SRC_PATH, "html", "main.html")
 print(f"{SRC_PATH=}, {MAIN_HTML_PATH=}")
@@ -60,7 +41,25 @@ class Log:
 
 
 
+def getCandidateDataDict() -> dict[str,list[str]]:
+    with open(os.path.join(CANDIDATE_DATA_PATH, "candidates.json"), "r") as file :
+        raw = json.loads(file.read())
+    parsed = {}
+    for post in raw:
+        candidates = []
+        for candidate in post['candidates']:
+            candidates.append(candidate["name"])
 
+        parsed[post["name"]] = candidates
+
+
+    return parsed
+
+CONNECTIONSTRING = os.getenv("CONNECTION_STRING")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+ACTIVE_COLLECTION = os.getenv("ACTIVE_COLLECTION")
+print(CONNECTIONSTRING)
+candidate_data = getCandidateDataDict()
 
 if __name__ == "__main__":
     client = pymongo.MongoClient(CONNECTIONSTRING)

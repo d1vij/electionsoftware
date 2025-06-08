@@ -5,8 +5,9 @@ import fs from "fs/promises";
 
 
 const FRONTEND_STATIC_FOLDER_PATH = path.join(__dirname, "..", "..", "ur-frontend", "dist");
-const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../ur-frontend/CANDIDATE_DATA/candidates.json");
-const CANDIDATE_IMAGES_PATH = path.join(__dirname, "../../ur-frontend/CANDIDATE_DATA/images");
+const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../../public/candidate-data/candidates.json");
+const CANDIDATE_IMAGES_PATH = path.join(__dirname, "../../../public/candidate-data/images");
+console.log(CANDIDATE_IMAGES_PATH)
 
 //multer config
 const storage = multer.diskStorage({
