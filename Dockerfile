@@ -36,3 +36,4 @@ EXPOSE 5000
 EXPOSE 3000
 
 CMD ["./server-script.sh"]
+# CMD ["python3","./server-script.py"]
