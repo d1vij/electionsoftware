@@ -127,7 +127,13 @@ export async function submitButton_EventListener(event: Event) {
     })
     console.log("parsing ended");
 
-    await sendToServer(imagesFormdata, postsData);
+    const candidateGroup = document.querySelector<HTMLInputElement>("input#candidate-group")!.value;
+    if(candidateGroup === "") {
+        alert("Choose a candidate group!!!");
+        return;
+    }
+    
+    await sendToServer(imagesFormdata,candidateGroup, postsData);
 }
 
 export async function updatePreviewImage(event: Event) {

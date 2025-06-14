@@ -21,25 +21,31 @@ export function toggleOverlayVisibility() {
 }
 
 
-export async function sendToServer(imagesformData: FormData, postsData: IPostData[]) {
+export async function sendToServer(imagesformData: FormData,candidateGroup:string, postsData: IPostData[]) {
     //images upload
-    const response1 = await fetch("/post/images", {
-        method: "POST",
-        body: imagesformData
-    })
-    const {uploaded} = await response1.json();
-    console.log("uploaded images "+uploaded.toString())
-    alert("Image data sent!");
+    try{
+        const response1 = await fetch("/post/images", {
+            method: "POST",
+            body: imagesformData
+        })
+        const { uploaded } = await response1.json();
+        console.log("uploaded images " + uploaded.toString())
+        alert("Image data sent!");
 
-    const response2 = await fetch("/post/posts-data", {
-        method:"POST",
-        headers:{
-            'Content-Type':"application/json",
-        },
-        body: JSON.stringify(postsData)
-    })
-    console.log(await response2.json());
-    alert("Posts data sent!")
+        const response2 = await fetch("/post/posts-data", {
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json",
+            },
+            body: JSON.stringify({ candidateGroup, postsData })
+        })
+        console.log(await response2.json());
+        alert(`Posts data saved as ${candidateGroup}.json`)
+
+    } catch (err){
+        alert(`Error : ${err}`)
+    }
+    
 }
 
 export async function getImageUri(imageFile: File): Promise<string> {
