@@ -1,21 +1,21 @@
-echo "Setup Started"
-cd "election-runner"
+echo Setup Started
 
-python3 -m venv venv
-./venv/scripts/activate
+cd election-runner
+
+python -m venv venv
+call venv\Scripts\activate.bat
 pip install -r requirements.txt
-echo "Python setup done"
+echo Python setup done
 
-
-cd ../user-registerer/ur-backend
+cd ..\user-registerer\ur-backend
 npm install
-npx tsc 
-echo "ur-backend setup done"
-
-cd ../ur-frontend
-npm install 
 npx tsc
-echo "ur-frontend setup done"
+echo ur-backend setup done
 
-cd ../../
-echo "setup done"
+cd ..\ur-frontend
+npm install
+npx tsc
+echo ur-frontend setup done
+
+cd ..\..
+echo setup done
