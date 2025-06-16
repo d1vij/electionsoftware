@@ -1,0 +1,11 @@
+1.changing candidates currently being voted 
+* user-registerer sent data also have a filename for current set of candidates.json file
+    -> text input for candidate set name -> which would become the filename of 
+        eg setname -> red_house, filename red_house.json
+* electionrunner frontend can choose which set of candidates to fetch in that session
+    -> text field near 
+
+
+
+
+2.merging electionrunner and user-registerer servers into one

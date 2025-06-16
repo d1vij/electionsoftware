@@ -24,7 +24,7 @@ type TCandidateData = IPostData[]
 /**
  * Static directory
  * /public/candidate-data/images/ + candidateuuid + ext -> for candidate image
- * /public/candidate-data/candidates.json -> for candidate data
+ * /public/candidate-data/x -> for candidate data
  * /public/data/password_hash.json -> contains password hash
  **/
 
@@ -33,13 +33,34 @@ function toggleVisibility() {
     votingDiv.classList.toggle("hidden");
 }
 
+async function fetchCandidateData(): Promise<TCandidateData>{
+    //prompts for candidate group and fetches it from server 
+    try{
+        let _userPrompt = prompt("Candidate Group?");
+        if(_userPrompt===""){
+            alert("Input a valid candidate group");
+            return fetchCandidateData();
+        }
+
+        const response = await fetch(`/public/candidate-data/${_userPrompt}.json`);
+        if(!response.ok) {
+            alert(`cannot find candidate group : ${_userPrompt}`);
+            return fetchCandidateData();
+        }
+        return await response.json();
+    }catch(err){
+        alert(err);
+    }
+    
+    return fetchCandidateData()
+}
+
 async function setup() {
     console.assert((!loginDiv.classList.contains("hidden")) && (votingDiv.classList.contains("hidden")), "Incorrect initial class to login and or voting container");
     let response = await fetch("/password-hash")
     Utils.PASSWORD_HASH = (await response.json()).password_hash || "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
 
-    response = await fetch("/public/candidate-data/candidates.json");
-    const candidateData:TCandidateData = await response.json();
+    const candidateData = await fetchCandidateData()
 
     // setting up content inside vote form
     for (const post of candidateData) {

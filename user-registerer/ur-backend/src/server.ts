@@ -22,7 +22,7 @@ import fs from "fs/promises";
 const FRONTEND_STATIC_FOLDER_PATH = path.join(__dirname, "../../ur-frontend/dist");
 
 //these should point to public directory of main election app
-const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../../election-runner/public/candidate-data/candidates.json");
+const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../../election-runner/public/candidate-data/");
 const CANDIDATE_IMAGES_PATH = path.join(__dirname, "../../../election-runner/public/candidate-data/images");
 console.log(CANDIDATE_IMAGES_PATH)
 
@@ -64,10 +64,11 @@ app.post("/post/images", uploadHandler.any(), (request, response) => {
     response.json({uploaded: request.files?.length || -1});
 })
 app.post("/post/posts-data",async (request, response)=>{
-    const data = request.body;
+    const data = request.body.postsData;
+    const _fpath = path.join(CANDIDATE_DATA_JSON_PATH, request.body.candidateGroup + ".json")
     console.log(data);
-    await fs.writeFile(CANDIDATE_DATA_JSON_PATH, JSON.stringify(data));
-    response.json({body:data});
+    await fs.writeFile(_fpath, JSON.stringify(data));
+    response.json({body:request.body})
 })
 
 app.listen(port, () => {
