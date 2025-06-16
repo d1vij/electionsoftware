@@ -5,8 +5,10 @@ A lightweight, asynchronous voting application with a MongoDB backend. It consis
 - **Election Runner** (for conducting the vote and showing results)  
 
 Built using FastAPI and Express.js, and containerized using Docker for easy deployment.
-
 ---
+
+> [!NOTE]
+> Prebuilt image _`docker pull d1vij/es-image:080725`_ (just edit .env)
 
 ## Installation
 
