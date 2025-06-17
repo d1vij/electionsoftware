@@ -62,6 +62,7 @@ const express_1 = __importDefault(require("express"));
 const path = __importStar(require("path"));
 const multer_1 = __importDefault(require("multer"));
 const promises_1 = __importDefault(require("fs/promises"));
+const chalk_1 = __importDefault(require("chalk"));
 const FRONTEND_STATIC_FOLDER_PATH = path.join(__dirname, "../../ur-frontend/dist");
 //these should point to public directory of main election app
 const CANDIDATE_DATA_JSON_PATH = path.join(__dirname, "../../../election-runner/public/candidate-data/");
@@ -81,10 +82,7 @@ const storage = multer_1.default.diskStorage({
 const uploadHandler = (0, multer_1.default)({ storage: storage });
 const app = (0, express_1.default)();
 const port = 3000;
-app.use((req, _, next) => {
-    console.log(`${req.url} got ${req.method}`);
-    next();
-});
+app.use(logger);
 app.use("/", express_1.default.static(FRONTEND_STATIC_FOLDER_PATH));
 app.use("/", express_1.default.static(CANDIDATE_DATA_JSON_PATH));
 app.use(express_1.default.json());
@@ -110,3 +108,26 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
     console.log("Access app at /index.html");
 });
+function logger(request, response, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        switch (request.method) {
+            case ("GET"): {
+                console.log(`${chalk_1.default.yellow("USER-REGISTERER")} ${chalk_1.default.green("GET")} on ${request.url} `);
+                break;
+            }
+            case ("GET"): {
+                console.log(`${chalk_1.default.yellow("USER-REGISTERER")} ${chalk_1.default.blue("POST")} on ${request.url} `);
+                break;
+            }
+            case ("GET"): {
+                console.log(`${chalk_1.default.yellow("USER-REGISTERER")} ${chalk_1.default.red("DELETE")} on ${request.url} `);
+                break;
+            }
+            default: {
+                console.log(`${chalk_1.default.yellow("USER-REGISTERER")} ${chalk_1.default.grey(request.method)} on ${request.url} `);
+                break;
+            }
+        }
+        next();
+    });
+}

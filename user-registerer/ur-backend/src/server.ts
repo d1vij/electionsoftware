@@ -13,10 +13,11 @@
  **/
 
 
-import express from "express";
+import express, { Request, Response,NextFunction } from "express";
 import * as path from "path";
 import multer from "multer";
 import fs from "fs/promises";
+import chalk from "chalk";
 
 
 const FRONTEND_STATIC_FOLDER_PATH = path.join(__dirname, "../../ur-frontend/dist");
@@ -42,11 +43,7 @@ const uploadHandler = multer({storage: storage})
 const app = express();
 const port = 3000;
 
-
-app.use((req, _, next) => {
-    console.log(`${req.url} got ${req.method}`);
-    next();
-})
+app.use(logger)
 app.use("/", express.static(FRONTEND_STATIC_FOLDER_PATH));
 app.use("/", express.static(CANDIDATE_DATA_JSON_PATH));
 app.use(express.json());
@@ -75,3 +72,26 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
     console.log("Access app at /index.html");
 })
+
+async function logger(request:Request, response:Response, next:NextFunction){
+    switch(request.method){
+        case("GET"):{
+            console.log(`${chalk.yellow("USER-REGISTERER")} ${chalk.green("GET")} on ${request.url} `)
+            break;
+        }
+        case("GET"):{
+            console.log(`${chalk.yellow("USER-REGISTERER")} ${chalk.blue("POST")} on ${request.url} `)
+            break;
+        }
+        case("GET"):{
+            console.log(`${chalk.yellow("USER-REGISTERER")} ${chalk.red("DELETE")} on ${request.url} `)
+            break;
+        }
+        default:{
+            console.log(`${chalk.yellow("USER-REGISTERER")} ${chalk.grey(request.method)} on ${request.url} `)
+            break;
+        }
+    }
+
+    next();
+}

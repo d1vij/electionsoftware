@@ -5,3 +5,4 @@ Procfile
 readme.md 
 voteapp.png
 votescreen.png
+**/dist/**

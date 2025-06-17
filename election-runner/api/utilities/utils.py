@@ -55,11 +55,13 @@ def getCandidateDataDict() -> dict[str,list[str]]:
     return parsed
 
 CONNECTIONSTRING = os.getenv("CONNECTION_STRING")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
-ACTIVE_COLLECTION = os.getenv("ACTIVE_COLLECTION")
-print(CONNECTIONSTRING)
+DATABASE_NAME = os.getenv("DATABASE_NAME") or "voting"
+ACTIVE_COLLECTION = os.getenv("ACTIVE_COLLECTION") or "votes"
+print(f"* Connection string {chalk.green(CONNECTIONSTRING)}")
 candidate_data = getCandidateDataDict()
-PASSWORD_HASH = hashlib.sha256(os.getenv("PASSWORD").encode()).hexdigest()
+PASSWORD = os.getenv("PASSWORD") or "1234"
+print(f"* Password {chalk.green(PASSWORD)}")
+PASSWORD_HASH = hashlib.sha256(PASSWORD.encode()).hexdigest()
 
 if __name__ == "__main__":
     client = pymongo.MongoClient(CONNECTIONSTRING)

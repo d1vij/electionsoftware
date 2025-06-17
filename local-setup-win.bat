@@ -2,7 +2,7 @@ echo Setup Started
 
 cd election-runner
 
-python -m venv venv
+py -m venv venv
 call venv\Scripts\activate.bat
 pip install -r requirements.txt
 echo Python setup done

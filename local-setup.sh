@@ -6,7 +6,8 @@ python3 -m venv venv
 source ./venv/bin/activate
 pip install -r requirements.txt
 echo "Python setup done"
-
+npm install 
+npx tsc
 
 cd ../user-registerer/ur-backend
 npm install
