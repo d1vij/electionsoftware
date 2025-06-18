@@ -128,12 +128,6 @@ Votes are stored as documents in the `votes` collection:
     }
   ]
 }
-```
-
-> **Security Note:**
-> The voting page is rendered with hidden HTML elements toggled by CSS. Although the vote form is hidden until login, a  user can manipulate the HTML to make it visible. While the submit button remains disabled until proper login, this still introduces a potential attack surface. This should be secured in future versions.
-
----
 
 ## Tech Stack
 
