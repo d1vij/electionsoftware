@@ -128,7 +128,7 @@ Votes are stored as documents in the `votes` collection:
     }
   ]
 }
-
+```
 ## Tech Stack
 
 ### Frontend
