@@ -3,6 +3,11 @@
 **/venv/
 Procfile
 readme.md 
-voteapp.png
-votescreen.png
+**/*.png
 **/dist/**
+**/public/src/**
+.idea/**
+.vscode/**
+./scripts/
+.gitignore
+readme.md
