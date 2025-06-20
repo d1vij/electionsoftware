@@ -1,4 +1,6 @@
 
+import json
+import os
 import matplotlib.pyplot as plt
 from io import BytesIO
 from base64 import b64encode
@@ -7,7 +9,7 @@ from pprint import pprint
 from .models import VoteResponse
 from .database_wrapper import DatabaseWrapper
 
-from .utils import CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION,candidate_data
+from .utils import CANDIDATE_DATA_PATH, CONNECTIONSTRING, DATABASE_NAME, ACTIVE_COLLECTION
 from .utils import Log
 
 
@@ -42,10 +44,22 @@ async def makeGraph(post, vote_dict) -> str:
     return f"data:image/png;base64,{b64encode(buffer.read()).decode('utf-8')}"
 
 
+def getCandidateDataDict(candidate_set) -> dict[str,list[str]]:
+    with open(os.path.join(CANDIDATE_DATA_PATH, f"{candidate_set}.json"), "r") as file :
+        raw = json.loads(file.read())
+    parsed = {}
+    for post in raw:
+        candidates = []
+        for candidate in post['candidates']:
+            candidates.append(candidate["name"])
+
+        parsed[post["name"]] = candidates
+
+    return parsed
 
 
 
-async def getResultGraphs() -> list[str]:
+async def getResultGraphs(candidate_set) -> list[str]:
     """
     generates result graphs for each post and returns array of dataurls corresponding to each graph
     """
@@ -53,6 +67,8 @@ async def getResultGraphs() -> list[str]:
         connection_string=CONNECTIONSTRING,
         database=DATABASE_NAME
     )
+    candidate_data = getCandidateDataDict(candidate_set)
+    
 
     all_documents: list[VoteResponse] = await connObj.fetchResults(collection=ACTIVE_COLLECTION)
     compiled_results = {p: dict.fromkeys(candidate_data[p], 0) for p in candidate_data.keys()}

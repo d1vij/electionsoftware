@@ -11,7 +11,7 @@
     "strict": true,
     "skipLibCheck": true,
     "rootDir": "./src/",
-    "outDir": "./public/src"
+    "outDir": "public/scripts"
   },
   "exclude": ["user-registerer"]
 }

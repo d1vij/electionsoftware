@@ -40,25 +40,11 @@ class Log:
 
 
 
-def getCandidateDataDict() -> dict[str,list[str]]:
-    with open(os.path.join(CANDIDATE_DATA_PATH, "candidates.json"), "r") as file :
-        raw = json.loads(file.read())
-    parsed = {}
-    for post in raw:
-        candidates = []
-        for candidate in post['candidates']:
-            candidates.append(candidate["name"])
-
-        parsed[post["name"]] = candidates
-
-
-    return parsed
 
 CONNECTIONSTRING = os.getenv("CONNECTION_STRING")
 DATABASE_NAME = os.getenv("DATABASE_NAME") or "voting"
 ACTIVE_COLLECTION = os.getenv("ACTIVE_COLLECTION") or "votes"
 print(f"* Connection string {chalk.green(CONNECTIONSTRING)}")
-candidate_data = getCandidateDataDict()
 PASSWORD = os.getenv("PASSWORD") or "1234"
 print(f"* Password {chalk.green(PASSWORD)}")
 PASSWORD_HASH = hashlib.sha256(PASSWORD.encode()).hexdigest()

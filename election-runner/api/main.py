@@ -72,12 +72,12 @@ class API:
 
     def get_routes(self):
 
-        @self.app.get('/result-images')
-        async def get_result_images():
+        @self.app.get('/result-images/{candidate_set}')
+        async def get_result_images(candidate_set: str):
             """helper function to request graphs"""
-            return {"imagedata": await getResultGraphs()}
+            return {"imagedata": await getResultGraphs(candidate_set)}
 
-        @self.app.get('/results')
+        @self.app.get('/results/')
         async def get_result_page():
             """loads result page"""
             return RedirectResponse("/public/html/results.html")
