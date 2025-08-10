@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Head boy",
+    "candidates": [
+      {
+        "name": "Divij",
+        "candidateId": "f46a663f-bff4-4083-a2c6-91ba9960402f"
+      },
+      {
+        "name": "bart",
+        "candidateId": "04a9f36f-63c7-4503-b783-241b6c63da45"
+      },
+      {
+        "name": "homer",
+        "candidateId": "b553d7be-e16c-419f-a4e1-cb2f913cd5a2"
+      }
+    ]
+  },
+  {
+    "name": "school captain",
+    "candidates": [
+      {
+        "name": "lisa simpson",
+        "candidateId": "4c282f66-cd97-4b6f-b07d-a42cfd896798"
+      },
+      {
+        "name": "stewie",
+        "candidateId": "cd0e2a07-cfdd-4c5b-b2b9-bc95b22ecf5e"
+      }
+    ]
+  }
+]

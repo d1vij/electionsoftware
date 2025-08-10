@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+</head>
+<body>
+    <h1>Vote results</h1>
+    <h1 id="setname">for</h1>
+    <div id="plots"></div>
+    
+    <script>
+        (async () =>{
+            let set = "";
+            while(set==""){
+                set = await prompt("Set");
+            }
+            console.log("result query sent")
+            const plots = document.getElementById('plots')
+            const res = await fetch('/result-images/'+set)
+            console.log("results fetched")
+            const data = await res.json()
+            for(let i=0 ;i<data.imagedata.length;i++){
+                let e = document.createElement('img');
+                e.setAttribute('draggable','false');
+                e.src = data.imagedata[i];
+                plots.append(e);
+                console.log(`Plotted plot ${i+1}`);
+            }
+
+            document.querySelector("h1#setname").innerText = set;
+        })()
+    </script>
+</body>
+</html>
