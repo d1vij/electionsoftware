@@ -1,0 +1,1 @@
+export {SqliteRegistrationRepository } from "./SqliteRegistrationRepository"
