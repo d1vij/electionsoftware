@@ -1,1 +1,1 @@
-export * from "./IDatabaseProvider"
+export * from "./IDatabaseProvider";

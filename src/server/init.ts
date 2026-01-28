@@ -1,27 +1,41 @@
-import path from "path";
+import path from "node:path";
 import { SqliteProvider } from "@/server/db/providers";
 
-import { SqliteRegistrationRepository } from "@/server/modules/registration/repositories";
-import { RegistrationService } from "./modules/registration/RegistrationService";
+import {
+    LocalFileStorageRegistrationRepository,
+    SqliteRegistrationDatabaseRepository,
+} from "@/server/modules/registration/repositories";
 import type { IDatabaseProvider } from "@/server/db";
+import { LocalFileStorageProvider } from "./filestorage/providers/LocalFileStorageProvider";
 
-// PROVIDERS
+const DATABASE_TYPE = "sqlite";
+const FILESYSTEM_TYPE = "local";
+
+// -----------------------------------------------------
+// DATABASE PROVIDERS
 export const sqliteProvider = new SqliteProvider(
     path.join(import.meta.dir, "..", "..", "data/app.db"),
 );
-const DATABASE_TYPE = "sqlite";
 
-// REPOSITORIES
-export const registrationRepository =
-    DATABASE_TYPE == "sqlite"
-        ? new SqliteRegistrationRepository(sqliteProvider.getInstance())
-        : new SqliteRegistrationRepository(sqliteProvider.getInstance());
-
-// SERVICES
-export const registrationService = new RegistrationService(
-    registrationRepository,
+// FILESTORAGE PROVIDERS
+export const localFileStorageProvider = new LocalFileStorageProvider(
+    path.join(import.meta.dir, "..", "..", "data/files"),
 );
 
+// -----------------------------------------------------
+// REPOSITORIES
+export const registrationDatabaseRepository =
+    DATABASE_TYPE === "sqlite"
+        ? new SqliteRegistrationDatabaseRepository(sqliteProvider.getInstance())
+        : new SqliteRegistrationDatabaseRepository(
+              sqliteProvider.getInstance(),
+          );
+export const registrationFileStorageRepository =
+    FILESYSTEM_TYPE === "local"
+        ? new LocalFileStorageRegistrationRepository(localFileStorageProvider)
+        : new LocalFileStorageRegistrationRepository(localFileStorageProvider);
+
+// -----------------------------------------------------
 // DATABASE
 export const databaseProvider: IDatabaseProvider<unknown> =
     DATABASE_TYPE == "sqlite" ? sqliteProvider : sqliteProvider;

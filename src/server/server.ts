@@ -1,7 +1,10 @@
 import Elysia from "elysia";
 
-import { databaseProvider } from "./init";
+import { databaseProvider } from "@/server/init";
 import registrationPlugin from "@/server/modules/registration/RegistrationPlugin";
+import loggerPlugin from "@/server/logger";
+
+const PORT = 5000;
 
 const databasePlugin = new Elysia()
     .onStart(async () => {
@@ -17,7 +20,10 @@ const app = new Elysia({
     },
     prefix: "/api",
 })
+    .use(loggerPlugin)
     .use(databasePlugin)
     .use(registrationPlugin)
-    .listen(5000);
+    .listen(PORT);
 export default app;
+
+console.log(`Server listening on ${PORT}`)

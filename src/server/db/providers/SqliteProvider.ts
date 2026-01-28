@@ -14,6 +14,7 @@ export class SqliteProvider implements IDatabaseProvider<Database> {
 
     public async connect(): VoidPromise {
         this.db.run("PRAGMA journal_mode = WAL;");
+        this.db.run("PRAGMA foreign_keys = ON;");
         this.db.query("SELECT 1").get();
     }
     public async disconnect(): VoidPromise {

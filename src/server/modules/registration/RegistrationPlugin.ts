@@ -1,25 +1,42 @@
 import Elysia, { t } from "elysia";
 import { PostwiseCandidates, PostwiseCandidatesUpdation } from "./types";
 
-import { registrationRepository } from "@/server/init";
+import {
+    registrationDatabaseRepository,
+    registrationFileStorageRepository,
+} from "@/server/init";
+
+import { RegistrationService } from "./RegistrationService";
 
 const registrationPlugin = new Elysia({
     prefix: "/register",
 })
+    .decorate("fileStorageRepo", registrationFileStorageRepository)
+    .decorate("registrationRepo", registrationDatabaseRepository)
     .get(
         "/",
-        async () => {
-            const results =
-                await registrationRepository.getAllCandidatesPostwise();
-            return results;
+        async ({ registrationRepo }) => {
+            return await RegistrationService.getAllPostwiseCandidates(
+                registrationRepo,
+            );
         },
         {
             response: t.Array(PostwiseCandidates),
         },
     )
-    .post("/", async () => {}, {
-        parse: "json",
-        body: t.Array(PostwiseCandidatesUpdation),
-    });
+    .post(
+        "/",
+        async ({ body, registrationRepo, fileStorageRepo }) => {
+            await RegistrationService.updatePosts(
+                body,
+                registrationRepo,
+                fileStorageRepo,
+            );
+            return { status: "success" };
+        },
+        {
+            body: t.Array(PostwiseCandidatesUpdation),
+        },
+    );
 
 export default registrationPlugin;
