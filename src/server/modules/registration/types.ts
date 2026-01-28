@@ -15,17 +15,10 @@ const UpdationType = t.Union([
     t.Literal("as-is"),
 ]);
 
-const CandidateImage = t.File({
-    type: "image/*",
-    maxSize: "25m",
-});
-export type TCandidateImage = typeof CandidateImage.static;
-
 const CandidateUpdation = t.Intersect([
     Candidate,
     t.Object({
         status: UpdationType,
-        candidate_image: t.Optional(CandidateImage),
     }),
 ]);
 
@@ -39,8 +32,7 @@ export const PostwiseCandidatesUpdation = t.Object({
     candidates: t.Array(CandidateUpdation),
 });
 
-export type TPostwiseCandidatesUpdation =
-    typeof PostwiseCandidatesUpdation.static;
+export type TPostwiseCandidatesUpdation = typeof PostwiseCandidatesUpdation.static;
 
 export const PostwiseCandidates = t.Object({
     post_id: t.String(),
@@ -49,3 +41,12 @@ export const PostwiseCandidates = t.Object({
 });
 
 export type TPostwiseCandidates = typeof PostwiseCandidates.static;
+
+export const CandidateImage = t.File({
+    type: "image/*",
+    maxSize: "25m",
+});
+export type TCandidateImage = typeof CandidateImage.static;
+
+export const CandidateImageUpload = t.Record(t.String(), CandidateImage);
+export type TCandidateImageUpload = typeof CandidateImageUpload.static;

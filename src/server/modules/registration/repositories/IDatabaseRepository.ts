@@ -7,14 +7,7 @@ export interface IDatabaseRepository {
     deletePost(post_id: string): Promise<{ post_id: string }>;
     createPost(post_id: string, post_name: string): Promise<void>;
 
-    updateCandidate(
-        candidate_id: string,
-        candidate_name: string,
-    ): Promise<void>;
-    createCandidate(
-        candidate_id: string,
-        post_id: string,
-        candidate_name: string,
-    ): Promise<void>;
+    updateCandidate(candidate_id: string, candidate_name: string): Promise<void>;
+    createCandidate(candidate_id: string, post_id: string, candidate_name: string): Promise<void>;
     deleteCandidate(candidate_id: string): Promise<void>;
 }

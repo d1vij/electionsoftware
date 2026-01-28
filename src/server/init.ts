@@ -2,20 +2,19 @@ import path from "node:path";
 import { SqliteProvider } from "@/server/db/providers";
 
 import {
-    LocalFileStorageRegistrationRepository,
-    SqliteRegistrationDatabaseRepository,
+    RegistrationLocalFileStorageRepository,
+    RegistrationSqliteDatabaseRepository,
 } from "@/server/modules/registration/repositories";
 import type { IDatabaseProvider } from "@/server/db";
 import { LocalFileStorageProvider } from "./filestorage/providers/LocalFileStorageProvider";
+import { ElectionsSqliteDatabaseRepository } from "./modules/elections/repositories";
 
 const DATABASE_TYPE = "sqlite";
 const FILESYSTEM_TYPE = "local";
 
 // -----------------------------------------------------
 // DATABASE PROVIDERS
-export const sqliteProvider = new SqliteProvider(
-    path.join(import.meta.dir, "..", "..", "data/app.db"),
-);
+export const sqliteProvider = new SqliteProvider(path.join(import.meta.dir, "..", "..", "data/app.db"));
 
 // FILESTORAGE PROVIDERS
 export const localFileStorageProvider = new LocalFileStorageProvider(
@@ -26,16 +25,19 @@ export const localFileStorageProvider = new LocalFileStorageProvider(
 // REPOSITORIES
 export const registrationDatabaseRepository =
     DATABASE_TYPE === "sqlite"
-        ? new SqliteRegistrationDatabaseRepository(sqliteProvider.getInstance())
-        : new SqliteRegistrationDatabaseRepository(
-              sqliteProvider.getInstance(),
-          );
+        ? new RegistrationSqliteDatabaseRepository(sqliteProvider.getInstance())
+        : new RegistrationSqliteDatabaseRepository(sqliteProvider.getInstance());
 export const registrationFileStorageRepository =
     FILESYSTEM_TYPE === "local"
-        ? new LocalFileStorageRegistrationRepository(localFileStorageProvider)
-        : new LocalFileStorageRegistrationRepository(localFileStorageProvider);
+        ? new RegistrationLocalFileStorageRepository(localFileStorageProvider)
+        : new RegistrationLocalFileStorageRepository(localFileStorageProvider);
+
+export const electionsDatabaseRepository =
+    DATABASE_TYPE === "sqlite"
+        ? new ElectionsSqliteDatabaseRepository(sqliteProvider.getInstance())
+        : new ElectionsSqliteDatabaseRepository(sqliteProvider.getInstance());
 
 // -----------------------------------------------------
 // DATABASE
 export const databaseProvider: IDatabaseProvider<unknown> =
-    DATABASE_TYPE == "sqlite" ? sqliteProvider : sqliteProvider;
+    DATABASE_TYPE === "sqlite" ? sqliteProvider : sqliteProvider;

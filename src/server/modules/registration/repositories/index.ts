@@ -1,2 +1,2 @@
-export { SqliteDatabaseRepository as SqliteRegistrationDatabaseRepository } from "./SqliteDatabaseRepository";
-export { LocalFileStorageRepository as LocalFileStorageRegistrationRepository } from "./LocalFileStorageRepository";
+export { SqliteDatabaseRepository as RegistrationSqliteDatabaseRepository } from "./SqliteDatabaseRepository";
+export { LocalFileStorageRepository as RegistrationLocalFileStorageRepository } from "./LocalFileStorageRepository";

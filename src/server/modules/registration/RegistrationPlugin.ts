@@ -1,12 +1,9 @@
 import Elysia, { t } from "elysia";
-import { PostwiseCandidates, PostwiseCandidatesUpdation } from "./types";
+import { CandidateImageUpload, PostwiseCandidates, PostwiseCandidatesUpdation } from "./types";
 
-import {
-    registrationDatabaseRepository,
-    registrationFileStorageRepository,
-} from "@/server/init";
+import { registrationDatabaseRepository, registrationFileStorageRepository } from "@/server/init";
 
-import { RegistrationService } from "./RegistrationService";
+import { getAllPostwiseCandidates, updatePosts, uploadCandidateImages } from "./RegistrationServices";
 
 const registrationPlugin = new Elysia({
     prefix: "/register",
@@ -16,22 +13,25 @@ const registrationPlugin = new Elysia({
     .get(
         "/",
         async ({ registrationRepo }) => {
-            return await RegistrationService.getAllPostwiseCandidates(
-                registrationRepo,
-            );
+            return await getAllPostwiseCandidates(registrationRepo);
         },
         {
             response: t.Array(PostwiseCandidates),
         },
     )
     .post(
-        "/",
-        async ({ body, registrationRepo, fileStorageRepo }) => {
-            await RegistrationService.updatePosts(
-                body,
-                registrationRepo,
-                fileStorageRepo,
-            );
+        "/upload/images",
+        async ({ fileStorageRepo, body }) => {
+            await uploadCandidateImages(fileStorageRepo, body);
+        },
+        {
+            body: CandidateImageUpload,
+        },
+    )
+    .post(
+        "/upload/data",
+        async ({ body, registrationRepo }) => {
+            await updatePosts(body, registrationRepo);
             return { status: "success" };
         },
         {

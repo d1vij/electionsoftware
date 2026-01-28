@@ -7,10 +7,7 @@ export class LocalFileStorageRepository implements IFileStorageRepository {
     public constructor(fs: LocalFileStorageProvider) {
         this.fs = fs;
     }
-    public async saveCandidateImage(
-        image: TImageFile,
-        id: string,
-    ): Promise<void> {
+    public async saveCandidateImage(image: TImageFile, id: string): Promise<void> {
         await this.fs.saveFile(image, id);
     }
 

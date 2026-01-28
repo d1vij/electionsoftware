@@ -1,6 +1,7 @@
 import type { Database } from "bun:sqlite";
-import type { IDatabaseRepository } from "./IRegistrationRepository";
 import type { TPostwiseCandidates } from "../types";
+import type { IDatabaseRepository } from "./IDatabaseRepository";
+import { getAllPostwiseCandidatesSqlite } from "../../common/getAllPostwiseCandidatesSqlite";
 
 export class SqliteDatabaseRepository implements IDatabaseRepository {
     private db: Database;
@@ -9,36 +10,7 @@ export class SqliteDatabaseRepository implements IDatabaseRepository {
     }
 
     public async getAllPostwiseCandidates(): Promise<TPostwiseCandidates[]> {
-        const posts = this.db
-            .query<{ post_id: string; post_name: string }, []>(
-                `select post_id, post_name from posts`,
-            )
-            .all();
-
-        const postwiseCandidates: TPostwiseCandidates[] = [];
-
-        const candidateQuery = this.db.query<
-            {
-                candidate_id: string;
-                candidate_name: string;
-            },
-            { post_id: string }
-        >(
-            `select candidate_name, candidate_id from candidates where post_id = $post_id`,
-        );
-        for (const row of posts) {
-            const candidates = candidateQuery.all({
-                post_id: row.post_id,
-            });
-
-            postwiseCandidates.push({
-                post_id: row.post_id,
-                post_name: row.post_name,
-                candidates: candidates,
-            });
-        }
-
-        return postwiseCandidates;
+        return getAllPostwiseCandidatesSqlite(this.db);
     }
 
     public async updatePostName(post_id: string, newName: string) {
@@ -55,9 +27,7 @@ export class SqliteDatabaseRepository implements IDatabaseRepository {
 
     public async deletePost(post_id: string) {
         const results = this.db
-            .query<{ post_id: string }, [string]>(
-                `delete from posts where post_id = ? returning post_id`,
-            )
+            .query<{ post_id: string }, [string]>(`delete from posts where post_id = ? returning post_id`)
             .get(post_id);
         if (!results) {
             throw new Error("no post exists with id " + post_id);
@@ -68,16 +38,11 @@ export class SqliteDatabaseRepository implements IDatabaseRepository {
 
     public async createPost(post_id: string, post_name: string): Promise<void> {
         this.db
-            .query<[], [string, string]>(
-                `insert into posts(post_id, post_name) values(?, ?)`,
-            )
+            .query<[], [string, string]>(`insert into posts(post_id, post_name) values(?, ?)`)
             .run(post_id, post_name);
     }
 
-    public async updateCandidate(
-        candidate_id: string,
-        candidate_name: string,
-    ): Promise<void> {
+    public async updateCandidate(candidate_id: string, candidate_name: string): Promise<void> {
         this.db
             .query(
                 ` update candidates
@@ -86,11 +51,7 @@ export class SqliteDatabaseRepository implements IDatabaseRepository {
             )
             .run(candidate_name, candidate_id);
     }
-    public async createCandidate(
-        candidate_id: string,
-        post_id: string,
-        candidate_name: string,
-    ): Promise<void> {
+    public async createCandidate(candidate_id: string, post_id: string, candidate_name: string): Promise<void> {
         this.db
             .query(
                 `
@@ -101,8 +62,6 @@ export class SqliteDatabaseRepository implements IDatabaseRepository {
             .run(candidate_id, post_id, candidate_name);
     }
     public async deleteCandidate(candidate_id: string): Promise<void> {
-        this.db
-            .query(`delete from candidates where candidate_id = ?`)
-            .run(candidate_id);
+        this.db.query(`delete from candidates where candidate_id = ?`).run(candidate_id);
     }
 }
