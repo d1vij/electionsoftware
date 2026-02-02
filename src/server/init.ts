@@ -5,9 +5,11 @@ import {
     RegistrationLocalFileStorageRepository,
     RegistrationSqliteDatabaseRepository,
 } from "@/server/modules/registration/repositories";
+import { ElectionsSqliteDatabaseRepository } from "./modules/elections/repositories";
+import { UserAuthorizationSqliteDatabaseRepository } from "./modules/user_authorization/repositories";
+
 import type { IDatabaseProvider } from "@/server/db";
 import { LocalFileStorageProvider } from "./filestorage/providers/LocalFileStorageProvider";
-import { ElectionsSqliteDatabaseRepository } from "./modules/elections/repositories";
 
 const DATABASE_TYPE = "sqlite";
 const FILESYSTEM_TYPE = "local";
@@ -36,6 +38,11 @@ export const electionsDatabaseRepository =
     DATABASE_TYPE === "sqlite"
         ? new ElectionsSqliteDatabaseRepository(sqliteProvider.getInstance())
         : new ElectionsSqliteDatabaseRepository(sqliteProvider.getInstance());
+
+export const userAuthorizationDatabaseRepository =
+    DATABASE_TYPE === "sqlite"
+        ? new UserAuthorizationSqliteDatabaseRepository(sqliteProvider.getInstance())
+        : new UserAuthorizationSqliteDatabaseRepository(sqliteProvider.getInstance());
 
 // -----------------------------------------------------
 // DATABASE
